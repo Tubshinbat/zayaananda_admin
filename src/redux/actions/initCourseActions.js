@@ -109,7 +109,7 @@ const getExcelDataError = (error) => {
 // LOAD INITCOURSE
 
 export const loadInitCourse = (query = "") => {
-  return function (dispatch, getState) {
+  return function (dispatch) {
     dispatch(loadInitCourseStart());
     axios
       .get("initCourses?" + query)

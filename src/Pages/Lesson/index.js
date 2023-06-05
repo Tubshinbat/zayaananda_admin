@@ -18,7 +18,7 @@ import { toastControl } from "../../lib/toasControl";
 import Loader from "../../Components/Generals/Loader";
 
 // Actions
-import * as actions from "../../redux/actions/initCourseActions";
+import * as actions from "../../redux/actions/lessonActions";
 
 const Courses = (props) => {
   const searchInput = useRef(null);
@@ -140,39 +140,6 @@ const Courses = (props) => {
       ],
       sorter: (a, b) => handleSort(),
     },
-    {
-      dataIndex: "star",
-      key: "star",
-      title: "Онцолсон",
-      status: true,
-      filters: [
-        {
-          text: "Онцолсон",
-          value: "true",
-        },
-        {
-          text: "Энгийн",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "isDiscount",
-      key: "isDiscount",
-      title: "Хөнгөлөлт",
-      status: true,
-      filters: [
-        {
-          text: "Хөнгөлөлтэй",
-          value: "true",
-        },
-        {
-          text: "Хөнгөлөлтгүй",
-          value: "false",
-        },
-      ],
-    },
 
     {
       dataIndex: "name",
@@ -182,36 +149,7 @@ const Courses = (props) => {
       ...getColumnSearchProps("name"),
       sorter: (a, b) => handleSort(),
     },
-    {
-      dataIndex: "type",
-      key: "type",
-      title: "Төрөл",
-      status: true,
-      filters: [
-        {
-          text: "Онлайн",
-          value: "online",
-        },
-        {
-          text: "Тэнхим",
-          value: "local",
-        },
-      ],
-    },
-    {
-      dataIndex: "price",
-      key: "price",
-      title: "Сургалтын төлбөр",
-      status: true,
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "discount",
-      key: "discount",
-      title: "Хөнгөлөлт",
-      status: false,
-      sorter: (a, b) => handleSort(),
-    },
+
     {
       dataIndex: "pictures",
       key: "pictures",
@@ -255,6 +193,17 @@ const Courses = (props) => {
       sorter: (a, b) => handleSort(),
     },
     {
+      dataIndex: "parentId",
+      key: "parentId",
+      title: "Курс",
+      status: true,
+      render: (text, record) => {
+        return (
+          <Tag color="blue">{record.parentId }</Tag>
+        );
+      },
+    },
+    {
       dataIndex: "createAt",
       key: "createAt",
       title: "Үүсгэсэн огноо",
@@ -280,7 +229,7 @@ const Courses = (props) => {
   };
 
   const handleDelete = () => {
-    props.deleteMultInitCourse(selectedRowKeys);
+    props.deleteMultLesson(selectedRowKeys);
   };
 
   // -- MODAL STATE
@@ -315,7 +264,7 @@ const Courses = (props) => {
   useEffect(() => {
     if (querys) {
       const query = queryBuild();
-      props.loadInitCourse(query);
+      props.loadLesson(query);
     }
   }, [querys]);
 
@@ -337,19 +286,17 @@ const Courses = (props) => {
 
   // -- NEWS GET DONE EFFECT
   useEffect(() => {
-    if (props.initCourses) {
+    if (props.lessons) {
       const refData = [];
-      props.initCourses.length > 0 &&
-        props.initCourses.map((el) => {
+      props.lessons.length > 0 &&
+        props.lessons.map((el) => {
           const key = el._id;
           delete el._id;
           delete el.detials;
           delete el.slug;
+
           el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          el.star = el.star == true ? "Онцгойлсон" : "Энгийн";
-          el.isDiscount =
-            el.isDiscount == true ? "Хөнгөлөлтэй" : "Хөнгөлөлтгүй";
-          el.type = el.type == "online" ? "Цахим" : "Тэнхим";
+
           el.createUser = el.createUser && el.createUser.firstname;
           el.updateUser = el.updateUser && el.updateUser.firstname;
           el.createAt = moment(el.createAt)
@@ -359,20 +306,7 @@ const Courses = (props) => {
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
 
-          el.menu =
-            el.menu && el.menu.length > 0 && el.menu.map((el) => el.name);
-
-          el.footerMenu =
-            el.footerMenu &&
-            el.footerMenu.length > 0 &&
-            el.footerMenu.map((el) => el.name);
-
-          el.categories =
-            el.categories &&
-            el.categories.length > 0 &&
-            el.categories.map((el) => el.name);
-
-          el.page = el.page && el.page.name && el.page.name;
+          el.parentId = el.parentId && el.parentId.name;
 
           refData.push({
             dataIndex: key,
@@ -382,7 +316,7 @@ const Courses = (props) => {
         });
       setData(refData);
     }
-  }, [props.initCourses]);
+  }, [props.lessons]);
 
   // Start moment
   useEffect(() => {
@@ -400,10 +334,11 @@ const Courses = (props) => {
       pagination: { ...tbf.pagination, total, pageSize },
     }));
   }, [props.pagination]);
+
   // -- INIT
   const init = () => {
     const query = queryBuild();
-    props.loadInitCourse(`${query}`);
+    props.loadLesson(`${query}`);
   };
 
   const clear = () => {};
@@ -569,18 +504,7 @@ const Courses = (props) => {
             el.status =
               el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
           }
-          if (col.key === "star" && col.status === true) {
-            el.star = el.star && el.star == true ? "Онцгойлсон" : "Энгийн";
-          }
-          if (col.key === "isDiscount" && col.status === true) {
-            el.isDiscount =
-              el.isDiscount && el.isDiscount == true
-                ? "Хөнгөлөлтэй"
-                : "Хөнгөлөлтгүй";
-          }
-          if (col.key === "type" && col.status === true) {
-            el.type = el.type && el.type == "online" ? "Цахим" : "Тэнхим";
-          }
+
           if (col.key === "createUser" && col.status === true) {
             el.createUser = el.createUser && el.createUser.firstname;
           }
@@ -591,12 +515,7 @@ const Courses = (props) => {
             el.menu =
               el.menu && el.menu.length > 0 && el.menu.map((el) => el.name);
           }
-          if (col.key === "footerMenu" && col.status === true) {
-            el.footerMenu =
-              el.footerMenu &&
-              el.footerMenu.length > 0 &&
-              el.footerMenu.map((el) => el.name);
-          }
+
           if (col.key === "categories" && col.status === true) {
             el.categories =
               el.categories &&
@@ -806,19 +725,19 @@ const Courses = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.initCourseReducer.loading,
-    success: state.initCourseReducer.success,
-    error: state.initCourseReducer.error,
-    initCourses: state.initCourseReducer.initCourses,
-    pagination: state.initCourseReducer.paginationLast,
-    excelData: state.initCourseReducer.excelData,
+    loading: state.lessonReducer.loading,
+    success: state.lessonReducer.success,
+    error: state.lessonReducer.error,
+    lessons: state.lessonReducer.lessons,
+    pagination: state.lessonReducer.paginationLast,
+    excelData: state.lessonReducer.excelData,
   };
 };
 
 const mapDispatchToProp = (dispatch) => {
   return {
-    loadInitCourse: (query) => dispatch(actions.loadInitCourse(query)),
-    deleteMultInitCourse: (ids) => dispatch(actions.deleteMultInitCourse(ids)),
+    loadLesson: (query) => dispatch(actions.loadLesson(query)),
+    deleteMultLesson: (ids) => dispatch(actions.deleteMultLesson(ids)),
     getExcelData: (query) => dispatch(actions.getExcelData(query)),
     clear: () => dispatch(actions.clear()),
   };

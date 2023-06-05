@@ -9,6 +9,7 @@ import {
   Radio,
   message,
   InputNumber,
+  Select,
 } from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
@@ -20,6 +21,8 @@ import Loader from "../../../Components/Generals/Loader";
 
 //Actions
 import * as actions from "../../../redux/actions/initCourseActions";
+import { loadInitCourse } from "../../../redux/actions/initCourseActions";
+
 
 // Lib
 import base from "../../../base";
@@ -38,17 +41,17 @@ const Edit = (props) => {
   const [form] = Form.useForm();
   const [isDiscount, setIsDiscount] = useState(false);
   const [pictures, setPictures] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [courseList, setCourseList] = useState([]);
   const [type, setType] = useState("online");
   const [deleteFiles, setDeleteFiles] = useState([]);
-  const [setProgress] = useState(0);
   const [loading, setLoading] = useState({
     visible: false,
     message: "",
   });
+
   const [checkedRadio, setCheckedRadio] = useState({
     status: true,
-    star: false,
-    isDiscount: false,
   });
 
   // FUNCTIONS
@@ -60,7 +63,6 @@ const Edit = (props) => {
     props.clear();
     form.resetFields();
     setPictures([]);
-    setType("online");
     setLoading(false);
   };
 
@@ -79,12 +81,8 @@ const Edit = (props) => {
   };
 
   const handleEdit = (values, status = null) => {
-    const type = values.type || "online";
-
     if (values.status === undefined) values.status = true;
-    if (values.star === undefined) values.star = false;
-    if (values.isDiscount === undefined) values.isDiscount = false;
-
+     
     if (pictures.length > 0) {
       values.pictures = pictures.map((el) => el.name);
     } else {
@@ -99,7 +97,6 @@ const Edit = (props) => {
 
     const data = {
       ...values,
-      type,
     };
 
     if (status === "draft") {
@@ -107,7 +104,7 @@ const Edit = (props) => {
     }
 
     const sendData = convertFromdata(data);
-    props.updateInitCourse(props.match.params.id, sendData);
+    props.updateLesson(props.match.params.id, sendData);
   };
 
   const handleRemove = (stType, file) => {
@@ -115,11 +112,22 @@ const Edit = (props) => {
     let deleteFile;
     let list;
 
-    index = pictures.indexOf(file);
-    deleteFile = pictures[index].name;
-    list = pictures.slice();
-    list.splice(index, 1);
-    setPictures(list);
+    switch (stType) {
+      case "videos":
+        index = videos.indexOf(file);
+        deleteFile = videos[index].name;
+        list = videos.slice();
+        list.splice(index, 1);
+        setVideos(list);
+        break;
+      default:
+        index = pictures.indexOf(list);
+        deleteFile = pictures[index].name;
+        list = pictures.slice();
+        list.splice(index, 1);
+        setPictures(list);
+        break;
+    }
     setDeleteFiles((bf) => [...bf, deleteFile]);
     // axios
     //   .delete("/imgupload", { data: { file: deleteFile } })
@@ -173,6 +181,44 @@ const Edit = (props) => {
     listType: "picture",
   };
 
+  const videoUploadOptions = {
+    onRemove: (file) => handleRemove("videos", file),
+    customRequest: (options) => uploadFile(options, "videos"),
+    fileList: [...videos],
+    accept: "video/*",
+    name: "video",
+    multiple: true,
+  };
+
+  const uploadFile = async (options, stType) => {
+    const { onSuccess, onError, file, onProgress } = options;
+    const fmData = new FormData();
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+      onUploadProgress: (event) => {
+        const percent = Math.floor((event.loaded / event.total) * 100);
+        onProgress({ percent: (event.loaded / event.total) * 100 });
+      },
+    };
+    fmData.append("file", file);
+    try {
+      setLoading({ visible: true, message: "Түр хүлээнэ үү файл хуулж байна" });
+      const res = await axios.post("/imgupload/file", fmData, config);
+      const data = {
+        name: res.data.data,
+        status: "done",
+      };
+
+      setVideos((bv) => [...bv, data]);
+      onSuccess("Ok");
+      message.success(res.data.data + " Хуулагдлаа");
+      setLoading({ visible: false, message: "" });
+    } catch (error) {
+      toastControl("error", error);
+      onError({ error });
+    }
+  };
+
   // USEEFFECT
   useEffect(() => {
     init();
@@ -180,16 +226,15 @@ const Edit = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.initCourse) {
-      form.setFieldsValue({ ...props.initCourse });
+    if (props.lesson) {
+      form.setFieldsValue({ ...props.lesson });
       setCheckedRadio(() => ({
-        star: props.initCourse.star,
-        status: props.initCourse.status,
+        status: props.lesson.status,
       }));
 
-      if (props.initCourse.pictures && props.initCourse.pictures.length > 0) {
+      if (props.lesson.pictures && props.lesson.pictures.length > 0) {
         setPictures(
-          props.initCourse.pictures.map((img) => ({
+          props.lesson.pictures.map((img) => ({
             name: img,
             url: `${base.cdnUrl}${img}`,
           }))
@@ -198,8 +243,13 @@ const Edit = (props) => {
         setPictures(() => []);
       }
 
-      setIsDiscount(() => props.initCourse.isDiscount);
-      setType(props.initCourse.type);
+      if(props.lesson.video){
+        setVideos([{
+          name:props.lesson.video,
+          status:"done"
+        }])
+      }
+
     }
   }, [props.initCourse]);
 
@@ -215,10 +265,23 @@ const Edit = (props) => {
     }
   }, [props.success]);
 
+
+  useEffect(() => {
+    if (props.initCourses) {
+      let datas = props.initCourses.map((course) => {
+        return {
+          label: course.name,
+          value: course._id,
+        };
+      });
+      setCourseList(datas);
+    }
+  }, [props.initCourses]);
+
   return (
     <>
       <div className="content-wrapper">
-        <PageTitle name="Курс шинчлэх" />
+        <PageTitle name="Хичээл шинчлэх" />
         <div className="page-sub-menu"></div>
         <div className="content">
           <Loader show={loading.visible}> {loading.message} </Loader>
@@ -231,42 +294,32 @@ const Edit = (props) => {
                       <div className="row">
                         <div className="col-12">
                           <Form.Item
-                            label="Курсын нэр"
+                            label="Хичээлийн нэр"
                             name="name"
                             rules={[requiredRule]}
                             hasFeedback
                           >
-                            <Input placeholder="Курсын нэр оруулна уу" />
+                            <Input placeholder="Хичээлийн нэр оруулна уу" />
                           </Form.Item>
                         </div>
                         <div className="col-12">
                           <Form.Item
-                            label="Сургалтын үнэ"
-                            name="price"
+                            label="Курс сонгох"
+                            name="parentId"
                             rules={[requiredRule]}
                             hasFeedback
                           >
-                            <InputNumber
-                              style={{ width: "100%" }}
-                              placeholder="Сургалтын үнэ оруулна уу"
-                            />
+                            <Select
+                              showSearch
+                              placeholder="Курс сонгох"
+                              optionFilterProp="children"
+                              options={courseList}
+                              filterOption={(input, option) =>
+                                (option?.label ?? "").includes(input)
+                              }
+                            ></Select>
                           </Form.Item>
                         </div>
-                        {isDiscount && (
-                          <div className="col-12">
-                            <Form.Item
-                              label="Хөнгөлөлт"
-                              name="discount"
-                              rules={[isDiscount && requiredRule]}
-                              hasFeedback
-                            >
-                              <InputNumber
-                                style={{ width: "100%" }}
-                                placeholder="Хөнгөлөлт оруулна уу"
-                              />
-                            </Form.Item>
-                          </div>
-                        )}
                         <div className="col-12">
                           <Form.Item
                             label="Дэлгэрэнгүй"
@@ -383,6 +436,29 @@ const Edit = (props) => {
                               onEditorChange={(event) => handleChange(event)}
                             />
                           </Form.Item>
+                        </div>
+                        <div className="col-12">
+                          <div className="card">
+                            <div class="card-header">
+                              <h3 class="card-title">Видео оруулах</h3>
+                            </div>
+                            <div className="card-body">
+                              <Dragger
+                                {...videoUploadOptions}
+                                className="upload-list-inline"
+                              >
+                                <p className="ant-upload-drag-icon">
+                                  <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">
+                                  Видеогоо энэ хэсэг рүү чирч оруулна уу
+                                </p>
+                                <p className="ant-upload-hint">
+                                  Нэг болон түүнээс дээш файл хуулах боломжтой
+                                </p>
+                              </Dragger>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
