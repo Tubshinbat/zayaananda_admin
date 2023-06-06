@@ -91,7 +91,8 @@ const Side = (props) => {
               >
                 <i className="nav-icon fa fa-bookmark" />
                 <p>
-                  Захиалгууд <span class="badge badge-info right">2</span>
+                  Захиалгууд 
+                  {/* <span class="badge badge-info right">2</span> */}
                 </p>
               </NavLink>
             </li>
@@ -102,17 +103,21 @@ const Side = (props) => {
                 <p>Нийтлэл</p>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink
-                to="/adsies"
-                className="nav-link"
-                activeClassName="active"
-              >
-                <i className="nav-icon fa fa-book" />
 
-                <p>Зарлал</p>
+            <li className="nav-item">
+              <NavLink to="/product" className="nav-link" activeClassName="active">
+                <i className="nav-icon fa fa-box" />
+                <p>Бүтээгдэхүүн</p>
               </NavLink>
             </li>
+
+            <li className="nav-item">
+              <NavLink to="/employee" className="nav-link" activeClassName="active">
+                <i className="nav-icon fa fa-users" />
+                <p>Хамт олон</p>
+              </NavLink>
+            </li>
+            
 
             {role != "operator" && (
               <li className="nav-item">
@@ -126,19 +131,7 @@ const Side = (props) => {
                 </NavLink>
               </li>
             )}
-            {role != "operator" && (
-              <li className="nav-item">
-                <NavLink
-                  to="/costs"
-                  className="nav-link"
-                  activeClassName="active"
-                >
-                  <i className="nav-icon fa fa-file-invoice-dollar" />
-
-                  <p>Үнийн мэдээлэл</p>
-                </NavLink>
-              </li>
-            )}
+           
 
             <li className="nav-item">
               <NavLink

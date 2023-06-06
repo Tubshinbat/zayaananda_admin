@@ -55,7 +55,11 @@ import GalleryEdit from "../Gallery/Edit";
 import User from "../Users";
 import UserAdd from "../Users/Add";
 import UserEdit from "../Users/Edit";
+//Booking
+import Booking from "../Booking";
 
+// Product
+// import Product from "../Product";
 // Websettings
 import WebSettings from "../WebSettings";
 import Socials from "../WebSettings/socials";
@@ -124,6 +128,9 @@ function App(props) {
               <Route path="/faqs/add" exact component={FaqAdd} />
               <Route path="/faqs/edit/:id" exact component={FaqEdit} />
               <Route path="/faqs" exact component={Faq} />
+              //Booking
+              <Route path="/booking" exact component={Booking} />
+              
               // Gallery
               <Route path="/gallery/add" exact component={GalleryAdd} />
               <Route path="/gallery/edit/:id" exact component={GalleryEdit} />

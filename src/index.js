@@ -11,7 +11,6 @@ import reportWebVitals from "./reportWebVitals";
 // Reducers
 import tokenReducer from "./redux/reducer/tokenReducer";
 import loginReducer from "./redux/reducer/loginReducer";
-
 import userReducer from "./redux/reducer/userReducer";
 import menuReducer from "./redux/reducer/menuReducer";
 import newsReducer from "./redux/reducer/newsReducer";
@@ -31,6 +30,9 @@ import bannerReducer from "./redux/reducer/bannerReducer";
 import adsBannerReducer from "./redux/reducer/adsBannerReducer";
 import footerMenuReducer from "./redux/reducer/footerMenuReducer";
 import pageReducer from "./redux/reducer/pageReducer";
+import bookingReducer from "./redux/reducer/bookingReducer";
+import productReducer from "./redux/reducer/productReducer";
+import employeeReducer from "./redux/reducer/employeeReducer"
 // styles
 import "./index.css";
 
@@ -69,6 +71,9 @@ const reducers = combineReducers({
   footerMenuReducer,
   lessonReducer,
   pageReducer,
+  bookingReducer,
+  productReducer,
+  employeeReducer,
   initCourseReducer,
 });
 
