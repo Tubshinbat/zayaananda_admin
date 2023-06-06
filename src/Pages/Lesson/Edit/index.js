@@ -8,7 +8,6 @@ import {
   Space,
   Radio,
   message,
-  InputNumber,
   Select,
 } from "antd";
 import { connect } from "react-redux";
@@ -20,9 +19,8 @@ import { InboxOutlined } from "@ant-design/icons";
 import Loader from "../../../Components/Generals/Loader";
 
 //Actions
-import * as actions from "../../../redux/actions/initCourseActions";
+import * as actions from "../../../redux/actions/lessonActions";
 import { loadInitCourse } from "../../../redux/actions/initCourseActions";
-
 
 // Lib
 import base from "../../../base";
@@ -43,6 +41,7 @@ const Edit = (props) => {
   const [pictures, setPictures] = useState([]);
   const [videos, setVideos] = useState([]);
   const [courseList, setCourseList] = useState([]);
+  const [selectCourse, setSelectCourse] = useState();
   const [type, setType] = useState("online");
   const [deleteFiles, setDeleteFiles] = useState([]);
   const [loading, setLoading] = useState({
@@ -56,7 +55,8 @@ const Edit = (props) => {
 
   // FUNCTIONS
   const init = () => {
-    props.getInitCourse(props.match.params.id);
+    props.loadInitCourse();
+    props.getLesson(props.match.params.id);
   };
 
   const clear = () => {
@@ -82,11 +82,17 @@ const Edit = (props) => {
 
   const handleEdit = (values, status = null) => {
     if (values.status === undefined) values.status = true;
-     
+
     if (pictures.length > 0) {
       values.pictures = pictures.map((el) => el.name);
     } else {
       values.pictures = [];
+    }
+
+    if (videos && videos.length > 0) {
+      values.video = videos[0].name;
+    } else {
+      values.video = "";
     }
 
     if (deleteFiles && deleteFiles.length > 0) {
@@ -121,7 +127,7 @@ const Edit = (props) => {
         setVideos(list);
         break;
       default:
-        index = pictures.indexOf(list);
+        index = pictures.indexOf(file);
         deleteFile = pictures[index].name;
         list = pictures.slice();
         list.splice(index, 1);
@@ -227,7 +233,10 @@ const Edit = (props) => {
 
   useEffect(() => {
     if (props.lesson) {
-      form.setFieldsValue({ ...props.lesson });
+      form.setFieldsValue({
+        ...props.lesson,
+        parentId: props.lesson.parentId && props.lesson.parentId._id,
+      });
       setCheckedRadio(() => ({
         status: props.lesson.status,
       }));
@@ -243,15 +252,28 @@ const Edit = (props) => {
         setPictures(() => []);
       }
 
-      if(props.lesson.video){
-        setVideos([{
-          name:props.lesson.video,
-          status:"done"
-        }])
+      if (props.lesson.video) {
+        setVideos([
+          {
+            name: props.lesson.video,
+            status: "done",
+          },
+        ]);
       }
-
     }
-  }, [props.initCourse]);
+  }, [props.lesson]);
+
+  useEffect(() => {
+    if (props.initCourses) {
+      let datas = props.initCourses.map((course) => {
+        return {
+          label: course.name,
+          value: course._id,
+        };
+      });
+      setCourseList(datas);
+    }
+  }, [props.initCourses]);
 
   // Ямар нэгэн алдаа эсвэл амжилттай үйлдэл хийгдвэл энд useEffect барьж аваад TOAST харуулна
   useEffect(() => {
@@ -261,10 +283,9 @@ const Edit = (props) => {
   useEffect(() => {
     if (props.success) {
       toastControl("success", props.success);
-      setTimeout(() => props.history.replace("/courses"), 2000);
+      setTimeout(() => props.history.replace("/lesson"), 2000);
     }
   }, [props.success]);
-
 
   useEffect(() => {
     if (props.initCourses) {
@@ -317,6 +338,7 @@ const Edit = (props) => {
                               filterOption={(input, option) =>
                                 (option?.label ?? "").includes(input)
                               }
+                              defaultValue={selectCourse}
                             ></Select>
                           </Form.Item>
                         </div>
@@ -607,19 +629,20 @@ const Edit = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    success: state.initCourseReducer.success,
-    error: state.initCourseReducer.error,
-    loading: state.initCourseReducer.loading,
-    initCourse: state.initCourseReducer.initCourse,
+    success: state.lessonReducer.success,
+    error: state.lessonReducer.error,
+    loading: state.lessonReducer.loading,
+    lesson: state.lessonReducer.lesson,
+    initCourses: state.initCourseReducer.initCourses,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateInitCourse: (id, data) =>
-      dispatch(actions.updateInitCourse(id, data)),
+    loadInitCourse: (query) => dispatch(loadInitCourse(query)),
+    updateLesson: (id, data) => dispatch(actions.updateLesson(id, data)),
     clear: () => dispatch(actions.clear()),
-    getInitCourse: (id) => dispatch(actions.getInitCourse(id)),
+    getLesson: (id) => dispatch(actions.getLesson(id)),
   };
 };
 

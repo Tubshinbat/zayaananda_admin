@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Switch,
-  Upload,
-  Space,
-  Radio,
-  Select,
-  message,
-  InputNumber,
-} from "antd";
+import { Form, Input, Button, Switch, Upload, Select, message } from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -56,6 +45,7 @@ const Add = (props) => {
     form.resetFields();
     setPictures([]);
     setLoading(false);
+    setVideos([]);
   };
 
   // -- TREE FUNCTIONS
@@ -73,14 +63,11 @@ const Add = (props) => {
       delete values.pictures;
     }
 
-    
-    if(videos.length > 0){
-      values.video = videos[1];
-    }else {
+    if (videos && videos.length > 0) {
+      values.video = videos[0].name;
+    } else {
       delete values.video;
     }
-
-    delete values.videos;
 
     const data = {
       ...values,
@@ -108,7 +95,7 @@ const Add = (props) => {
         setVideos(list);
         break;
       default:
-        index = pictures.indexOf(list);
+        index = pictures.indexOf(file);
         deleteFile = pictures[index].name;
         list = pictures.slice();
         list.splice(index, 1);
@@ -219,7 +206,7 @@ const Add = (props) => {
   useEffect(() => {
     if (props.success) {
       toastControl("success", props.success);
-      setTimeout(() => props.history.replace("/courses"), 2000);
+      setTimeout(() => props.history.replace("/lesson"), 2000);
     }
   }, [props.success]);
 

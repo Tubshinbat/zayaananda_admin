@@ -144,7 +144,7 @@ const Courses = (props) => {
     {
       dataIndex: "name",
       key: "name",
-      title: "Курсын нэр",
+      title: "Хичээлийн нэр",
       status: true,
       ...getColumnSearchProps("name"),
       sorter: (a, b) => handleSort(),
@@ -198,9 +198,7 @@ const Courses = (props) => {
       title: "Курс",
       status: true,
       render: (text, record) => {
-        return (
-          <Tag color="blue">{record.parentId }</Tag>
-        );
+        return <Tag color="blue">{record.parentId}</Tag>;
       },
     },
     {
