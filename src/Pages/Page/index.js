@@ -467,8 +467,8 @@ const Page = (props) => {
             el.pageParentActive == true ? "Холбосон" : "Холбоогүй";
           el.modalActive = el.modalActive == true ? "Холбосон" : "Холбоогүй";
           el.choiseModal = el.choiseModal == true ? "Холбосон" : "Холбоогүй";
-          el.createUser = el.createUser && el.createUser.firstname;
-          el.updateUser = el.updateUser && el.updateUser.firstname;
+          el.createUser = el.createUser && el.createUser.firstName;
+          el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -688,10 +688,10 @@ const Page = (props) => {
               el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
           }
           if (col.key === "createUser" && col.status === true) {
-            el.createUser = el.createUser && el.createUser.firstname;
+            el.createUser = el.createUser && el.createUser.firstName;
           }
           if (col.key === "updateUser" && col.status === true) {
-            el.updateUser = el.updateUser && el.updateUser.firstname;
+            el.updateUser = el.updateUser && el.updateUser.firstName;
           }
           if (col.key === "menu" && col.status === true) {
             el.menu =

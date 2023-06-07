@@ -61,7 +61,14 @@ import BookingEdit from "../Booking/Edit";
 import BookingAdd from "../Booking/Add";
 
 // Product
-// import Product from "../Product";
+import Product from "../Product";
+import ProductAdd from "../Product/Add";
+import ProductEdit from "../Product/Edit"
+// Employee
+import Employee from "../Employee";
+import EmployeeAdd from "../Employee/Add";
+import EmployeeEdit from "../Employee/Edit"
+
 // Websettings
 import WebSettings from "../WebSettings";
 import Socials from "../WebSettings/socials";
@@ -146,10 +153,18 @@ function App(props) {
               <Route path="/lesson/add" exact component={LessonAdd} />
               <Route path="/lesson/edit/:id" exact component={LessonEdit} />
               <Route path="/lesson" exact component={Lesson} />
+              // Product
+              <Route path="/product/add" exact component={ProductAdd} />
+              <Route path="/product/edit/:id" exact component={ProductEdit} />
+              <Route path="/product" exact component={Product} />
               // Pages
               <Route path="/pages/add" exact component={PageAdd} />
               <Route path="/pages/edit/:id" exact component={PageEdit} />
               <Route path="/pages" exact component={Page} />
+              // Employee
+              <Route path="/employee/add" exact component={EmployeeAdd} />
+              <Route path="/employee/edit/:id" exact component={EmployeeEdit} />
+              <Route path="/employee" exact component={Employee} />
               //users
               <Route path="/users/add" exact component={UserAdd} />
               <Route path="/users/edit/:id" exact component={UserEdit} />

@@ -350,8 +350,8 @@ const Courses = (props) => {
           el.isDiscount =
             el.isDiscount == true ? "Хөнгөлөлтэй" : "Хөнгөлөлтгүй";
           el.type = el.type == "online" ? "Цахим" : "Тэнхим";
-          el.createUser = el.createUser && el.createUser.firstname;
-          el.updateUser = el.updateUser && el.updateUser.firstname;
+          el.createUser = el.createUser && el.createUser.firstName;
+          el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -582,10 +582,10 @@ const Courses = (props) => {
             el.type = el.type && el.type == "online" ? "Цахим" : "Тэнхим";
           }
           if (col.key === "createUser" && col.status === true) {
-            el.createUser = el.createUser && el.createUser.firstname;
+            el.createUser = el.createUser && el.createUser.firstName;
           }
           if (col.key === "updateUser" && col.status === true) {
-            el.updateUser = el.updateUser && el.updateUser.firstname;
+            el.updateUser = el.updateUser && el.updateUser.firstName;
           }
           if (col.key === "menu" && col.status === true) {
             el.menu =

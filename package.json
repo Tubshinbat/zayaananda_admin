@@ -10,7 +10,7 @@
     "antd": "^4.22.7",
     "axios": "^0.21.1",
     "bootstrap": "^5.1.3",
-    "dayjs": "^1.11.6",
+    "dayjs": "^1.11.8",
     "doka": "^0.1.0",
     "excel-export": "^0.5.1",
     "express-async-handler": "^1.1.4",

@@ -225,7 +225,7 @@ const Add = (props) => {
                                   message: "2 -оос дээш утга оруулна уу",
                                 },
                               ]}
-                              name="firstname"
+                              name="firstName"
                               hasFeedback
                             >
                               <Input placeholder="Нэр оруулна уу" />

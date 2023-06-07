@@ -305,8 +305,8 @@ const Services = (props) => {
           delete el._id;
           el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
           el.direct = el.direct == true ? "Линк холбосон" : "Линк холбоогүй";
-          el.createUser = el.createUser && el.createUser.firstname;
-          el.updateUser = el.updateUser && el.updateUser.firstname;
+          el.createUser = el.createUser && el.createUser.firstName;
+          el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -520,10 +520,10 @@ const Services = (props) => {
                 : "Линк холбоогүй";
           }
           if (col.key === "createUser" && col.status === true) {
-            el.createUser = el.createUser && el.createUser.firstname;
+            el.createUser = el.createUser && el.createUser.firstName;
           }
           if (col.key === "updateUser" && col.status === true) {
-            el.updateUser = el.updateUser && el.updateUser.firstname;
+            el.updateUser = el.updateUser && el.updateUser.firstName;
           }
           if (col.key === "pictures" && col.status === true) {
             el.pictures = el.pictures && el.pictures[0];

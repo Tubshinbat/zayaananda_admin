@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Modal, Input, Table, Tag, Space, Tooltip } from "antd";
+import { Button, Modal, Input, Select, Table, Tag, Space, Tooltip } from "antd";
 import { connect } from "react-redux";
 import Highlighter from "react-highlight-words";
 import moment from "moment";
@@ -8,19 +8,19 @@ import * as XLSX from "xlsx";
 import { SearchOutlined } from "@ant-design/icons";
 
 //Lib
-import base from "../../../base";
+import base from "../../base";
 
 //Components
-import PageTitle from "../../../Components/PageTitle";
-import axios from "../../../axios-base";
-import { toastControl } from "../../../lib/toasControl";
-import Loader from "../../../Components/Generals/Loader";
-import Menus from "../menu";
+import PageTitle from "../../Components/PageTitle";
+import Menus from "./menu";
+import axios from "../../axios-base";
+import { toastControl } from "../../lib/toasControl";
+import Loader from "../../Components/Generals/Loader";
 
 // Actions
-import * as actions from "../../../redux/actions/bannerActions";
+import * as actions from "../../redux/actions/productActions";
 
-const Banners = (props) => {
+const Product = (props) => {
   const searchInput = useRef(null);
   //STATES
   const [searchText, setSearchText] = useState("");
@@ -31,6 +31,7 @@ const Banners = (props) => {
     message: "",
   });
   const [data, setData] = useState([]);
+  const [error, setError] = useState("");
 
   // -- FILTER STATE
   const [querys, setQuerys] = useState({});
@@ -127,7 +128,6 @@ const Banners = (props) => {
       key: "status",
       title: "Төлөв",
       status: true,
-      filterMode: "tree",
       filters: [
         {
           text: "Нийтлэгдсэн",
@@ -140,45 +140,40 @@ const Banners = (props) => {
       ],
       sorter: (a, b) => handleSort(),
     },
-
-    {
-      dataIndex: "type",
-      key: "type",
-      title: "Төрөл",
-      status: true,
-      filterMode: "tree",
-      filters: [
-        {
-          text: "Зураг",
-          value: "photo",
-        },
-        {
-          text: "Видео",
-          value: "video",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-
+    
     {
       dataIndex: "name",
       key: "name",
-      title: "Зарлалын гарчиг",
+      title: "Бүтээгдэхүүний нэр",
       status: true,
       ...getColumnSearchProps("name"),
       sorter: (a, b) => handleSort(),
     },
-
+   
     {
-      dataIndex: "picture",
-      key: "picture",
+      dataIndex: "price",
+      key: "price",
+      title: "Үнэ",
+      status: true,
+      sorter: (a, b) => handleSort(),
+    },
+    {
+      dataIndex: "discount",
+      key: "discount",
+      title: "Хөнгөлөлт",
+      status: false,
+      sorter: (a, b) => handleSort(),
+    },
+    {
+      dataIndex: "pictures",
+      key: "pictures",
       title: "Зураг",
       status: true,
       render: (text, record) => {
         return (
           <div className="table-image">
-            {record.picture ? (
-              <img src={`${base.cdnUrl}150x150/${record.picture}`} />
+            {record.pictures && record.pictures.length > 0 ? (
+              <img src={`${base.cdnUrl}150x150/${record.pictures[0]}`} />
             ) : (
               "Зураг оруулаагүй байна"
             )}
@@ -188,14 +183,13 @@ const Banners = (props) => {
     },
 
     {
-      dataIndex: "link",
-      key: "link",
-      title: "Холбоос линк",
-      status: false,
-      ...getColumnSearchProps("createUser"),
+      dataIndex: "views",
+      key: "views",
+      title: "Үзсэн",
+      status: true,
+      ...getColumnSearchProps("views"),
       sorter: (a, b) => handleSort(),
     },
-
     {
       dataIndex: "createUser",
       key: "createUser",
@@ -227,19 +221,18 @@ const Banners = (props) => {
       sorter: (a, b) => handleSort(),
     },
   ]);
-
   const [cloneColumns, setCloneColumns] = useState(columns);
 
   const handleEdit = () => {
     if (selectedRowKeys.length != 1) {
       toastControl("error", "Нэг өгөгдөл сонгоно уу");
     } else {
-      history.push(`/web_settings/banners/edit/${selectedRowKeys[0]}`);
+      history.push(`/product/edit/${selectedRowKeys[0]}`);
     }
   };
 
   const handleDelete = () => {
-    props.deleteMultBanner(selectedRowKeys);
+    props.deleteMultProduct(selectedRowKeys);
   };
 
   // -- MODAL STATE
@@ -254,7 +247,11 @@ const Banners = (props) => {
       toastControl("error", props.error);
       props.clear();
     }
-  }, [props.error]);
+    if (error) {
+      toastControl("error", error);
+      props.clear();
+    }
+  }, [props.error, error]);
 
   useEffect(() => {
     if (props.success !== null) {
@@ -270,7 +267,7 @@ const Banners = (props) => {
   useEffect(() => {
     if (querys) {
       const query = queryBuild();
-      props.loadBanner(query);
+      props.loadProduct(query);
     }
   }, [querys]);
 
@@ -290,16 +287,18 @@ const Banners = (props) => {
     setLoading({ visible: props.loading, message: "Түр хүлээнэ үү" });
   }, [props.loading]);
 
-  // -- SERVICES GET DONE EFFECT
+  // -- NEWS GET DONE EFFECT
   useEffect(() => {
-    if (props.banners) {
+    if (props.products) {
       const refData = [];
-
-      props.banners.length > 0 &&
-        props.banners.map((el) => {
+      props.products.length > 0 &&
+        props.products.map((el) => {
           const key = el._id;
           delete el._id;
+          delete el.detials;
+          delete el.slug;
           el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
+          
           el.createUser = el.createUser && el.createUser.firstName;
           el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
@@ -309,16 +308,17 @@ const Banners = (props) => {
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
 
+      
+
           refData.push({
             dataIndex: key,
             key,
             ...el,
           });
         });
-      // console.log(refData);
       setData(refData);
     }
-  }, [props.banners]);
+  }, [props.products]);
 
   // Start moment
   useEffect(() => {
@@ -327,9 +327,11 @@ const Banners = (props) => {
       clear();
     };
   }, []);
+
   useEffect(() => {
     const total = props.pagination.total;
     const pageSize = props.pagination.limit;
+
     setTableParams((tbf) => ({
       ...tbf,
       pagination: { ...tbf.pagination, total, pageSize },
@@ -338,7 +340,7 @@ const Banners = (props) => {
   // -- INIT
   const init = () => {
     const query = queryBuild();
-    props.loadBanner(`${query}`);
+    props.loadProduct(`${query}`);
   };
 
   const clear = () => {};
@@ -380,7 +382,7 @@ const Banners = (props) => {
     if (pagination) {
       setQuerys((bq) => ({
         ...bq,
-        page: pagination.current,
+        pageNumber: pagination.current,
         limit: pagination.pageSize,
       }));
     }
@@ -399,7 +401,6 @@ const Banners = (props) => {
     }
 
     if (filters) {
-      // console.log("end");
       Object.keys(filters).map((key) => {
         let str = null;
         if (filters[key]) {
@@ -422,13 +423,12 @@ const Banners = (props) => {
     Object.keys(querys).map((key) => {
       key !== "select" && (query += `${key}=${querys[key]}&`);
     });
-    if (querys.select && querys.select[0]) {
+    if (querys.select && querys.select[0])
       query += `select=${
         querys &&
         querys.select &&
         querys.select[0].join(" ").replaceAll(",", " ")
       }`;
-    }
     return query;
   };
 
@@ -445,9 +445,7 @@ const Banners = (props) => {
       }
       case "edit": {
         if (selectedRowKeys && selectedRowKeys.length === 1) {
-          props.history.replace(
-            "/web_settings/banners/edit/" + selectedRowKeys[0]
-          );
+          props.history.replace("/news/edit/" + selectedRowKeys[0]);
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
         }
@@ -474,7 +472,6 @@ const Banners = (props) => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  const hasSelected = selectedRowKeys.length > 0;
 
   // -- PLUS FUNCTION REFRESH, TO EXCEL, COLUMN
   const refreshTable = () => {
@@ -495,7 +492,7 @@ const Banners = (props) => {
   // -- CONVER JSON  TO EXCEL
   const exportExcel = async () => {
     const query = queryBuild();
-    const response = await axios.get("banners/excel?" + query);
+    const response = await axios.get("product/excel?" + query);
     let excelData = [];
     if (response) {
       const data = response.data.data;
@@ -509,11 +506,28 @@ const Banners = (props) => {
             el.status =
               el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
           }
+       
           if (col.key === "createUser" && col.status === true) {
             el.createUser = el.createUser && el.createUser.firstName;
           }
           if (col.key === "updateUser" && col.status === true) {
             el.updateUser = el.updateUser && el.updateUser.firstName;
+          }
+          if (col.key === "menu" && col.status === true) {
+            el.menu =
+              el.menu && el.menu.length > 0 && el.menu.map((el) => el.name);
+          }
+          if (col.key === "footerMenu" && col.status === true) {
+            el.footerMenu =
+              el.footerMenu &&
+              el.footerMenu.length > 0 &&
+              el.footerMenu.map((el) => el.name);
+          }
+          if (col.key === "categories" && col.status === true) {
+            el.categories =
+              el.categories &&
+              el.categories.length > 0 &&
+              el.categories.map((el) => el.name);
           }
           if (col.key === "createAt" && col.status === true) {
             el.createAt = moment(el.createAt)
@@ -529,12 +543,6 @@ const Banners = (props) => {
         return el;
       });
     }
-
-    setLoading({
-      visible: true,
-      message: "Түр хүлээнэ үү excel файлруу хөрвүүлж байна",
-    });
-
     const head = [];
     cloneColumns.map((col) => {
       if (col.status === true) head.push(col.title);
@@ -544,7 +552,6 @@ const Banners = (props) => {
       visible: true,
       message: "Түр хүлээнэ үү excel файлруу хөрвүүлж байна",
     });
-
     if (excelData && excelData.length > 0) {
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
@@ -564,22 +571,21 @@ const Banners = (props) => {
   return (
     <>
       <div className="content-wrapper">
-        <div className="page-sub-menu">
-          <Menus />
-        </div>
+        <PageTitle name="Бүтээгдэхүүн" />
+        
         <div className="content">
           <Loader show={loading.visible}> {loading.message}</Loader>
           <div className="container-fluid">
             <div className="card datatable-card">
               <div className="card-header">
-                <h3 className="card-title">Бүх баннер</h3>
+                <h3 className="card-title">Бүгд</h3>
               </div>
               <div className="card-body datatable-card-body">
                 <div className="datatable-header-tools">
                   <div className="datatable-actions">
                     <button
                       className="datatable-action add-bg"
-                      onClick={() => history.push(`/web_settings/banners/add`)}
+                      onClick={() => history.push(`/product/add`)}
                     >
                       <i className="fa fa-plus"></i> Нэмэх
                     </button>
@@ -633,6 +639,9 @@ const Banners = (props) => {
                     loading={props.loading}
                     size="small"
                   />
+                </div>
+                <div className="talbeFooter">
+                  Нийт <b> {props.pagination.total} </b> өгөгдөл байна
                 </div>
               </div>
             </div>
@@ -721,22 +730,22 @@ const Banners = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.bannerReducer.loading,
-    success: state.bannerReducer.success,
-    error: state.bannerReducer.error,
-    banners: state.bannerReducer.banners,
-    pagination: state.bannerReducer.paginationLast,
-    excelData: state.bannerReducer.excelData,
+    loading: state.productReducer.loading,
+    success: state.productReducer.success,
+    error: state.productReducer.error,
+    products: state.productReducer.products,
+    pagination: state.productReducer.paginationLast,
+    excelData: state.productReducer.excelData,
   };
 };
 
 const mapDispatchToProp = (dispatch) => {
   return {
-    loadBanner: (query) => dispatch(actions.loadBanner(query)),
-    deleteMultBanner: (ids) => dispatch(actions.deleteMultBanner(ids)),
+    loadProduct: (query) => dispatch(actions.loadProduct(query)),
+    deleteMultProduct: (ids) => dispatch(actions.deleteMultProduct(ids)),
     getExcelData: (query) => dispatch(actions.getExcelData(query)),
     clear: () => dispatch(actions.clear()),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProp)(Banners);
+export default connect(mapStateToProps, mapDispatchToProp)(Product);

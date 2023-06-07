@@ -32,7 +32,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        employees: action.loadEmployees,
+        employees: action.employees,
       };
 
     case "LOAD_EMPLOYEES_ERROR":

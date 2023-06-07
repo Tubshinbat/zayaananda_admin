@@ -8,19 +8,18 @@ import * as XLSX from "xlsx";
 import { SearchOutlined } from "@ant-design/icons";
 
 //Lib
-import base from "../../../base";
+import base from "../../base";
 
 //Components
-import PageTitle from "../../../Components/PageTitle";
-import axios from "../../../axios-base";
-import { toastControl } from "../../../lib/toasControl";
-import Loader from "../../../Components/Generals/Loader";
-import Menus from "../menu";
+import PageTitle from "../../Components/PageTitle";
+import axios from "../../axios-base";
+import { toastControl } from "../../lib/toasControl";
+import Loader from "../../Components/Generals/Loader";
 
 // Actions
-import * as actions from "../../../redux/actions/bannerActions";
+import * as actions from "../../redux/actions/employeeActions";
 
-const Banners = (props) => {
+const Employees = (props) => {
   const searchInput = useRef(null);
   //STATES
   const [searchText, setSearchText] = useState("");
@@ -142,30 +141,29 @@ const Banners = (props) => {
     },
 
     {
-      dataIndex: "type",
-      key: "type",
-      title: "Төрөл",
+      dataIndex: "lastName",
+      key: "lastName",
+      title: "Нэр",
       status: true,
-      filterMode: "tree",
-      filters: [
-        {
-          text: "Зураг",
-          value: "photo",
-        },
-        {
-          text: "Видео",
-          value: "video",
-        },
-      ],
+      ...getColumnSearchProps("lastName"),
       sorter: (a, b) => handleSort(),
     },
 
     {
-      dataIndex: "name",
-      key: "name",
-      title: "Зарлалын гарчиг",
+      dataIndex: "firstName",
+      key: "firstName",
+      title: "Овог нэр",
       status: true,
-      ...getColumnSearchProps("name"),
+      ...getColumnSearchProps("firstName"),
+      sorter: (a, b) => handleSort(),
+    },
+
+    {
+      dataIndex: "position",
+      key: "position",
+      title: "Албан тушаал",
+      status: true,
+      ...getColumnSearchProps("position"),
       sorter: (a, b) => handleSort(),
     },
 
@@ -185,15 +183,6 @@ const Banners = (props) => {
           </div>
         );
       },
-    },
-
-    {
-      dataIndex: "link",
-      key: "link",
-      title: "Холбоос линк",
-      status: false,
-      ...getColumnSearchProps("createUser"),
-      sorter: (a, b) => handleSort(),
     },
 
     {
@@ -234,12 +223,12 @@ const Banners = (props) => {
     if (selectedRowKeys.length != 1) {
       toastControl("error", "Нэг өгөгдөл сонгоно уу");
     } else {
-      history.push(`/web_settings/banners/edit/${selectedRowKeys[0]}`);
+      history.push(`/employee/edit/${selectedRowKeys[0]}`);
     }
   };
 
   const handleDelete = () => {
-    props.deleteMultBanner(selectedRowKeys);
+    props.deleteMultEmployee(selectedRowKeys);
   };
 
   // -- MODAL STATE
@@ -270,7 +259,7 @@ const Banners = (props) => {
   useEffect(() => {
     if (querys) {
       const query = queryBuild();
-      props.loadBanner(query);
+      props.loadEmployee(query);
     }
   }, [querys]);
 
@@ -292,14 +281,14 @@ const Banners = (props) => {
 
   // -- SERVICES GET DONE EFFECT
   useEffect(() => {
-    if (props.banners) {
+    if (props.employees) {
       const refData = [];
 
-      props.banners.length > 0 &&
-        props.banners.map((el) => {
+      props.employees.length > 0 &&
+        props.employees.map((el) => {
           const key = el._id;
           delete el._id;
-          el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
+         
           el.createUser = el.createUser && el.createUser.firstName;
           el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
@@ -318,7 +307,7 @@ const Banners = (props) => {
       // console.log(refData);
       setData(refData);
     }
-  }, [props.banners]);
+  }, [props.employees]);
 
   // Start moment
   useEffect(() => {
@@ -338,7 +327,7 @@ const Banners = (props) => {
   // -- INIT
   const init = () => {
     const query = queryBuild();
-    props.loadBanner(`${query}`);
+    props.loadEmployee(`${query}`);
   };
 
   const clear = () => {};
@@ -445,9 +434,7 @@ const Banners = (props) => {
       }
       case "edit": {
         if (selectedRowKeys && selectedRowKeys.length === 1) {
-          props.history.replace(
-            "/web_settings/banners/edit/" + selectedRowKeys[0]
-          );
+          props.history.replace("/platforms/edit/" + selectedRowKeys[0]);
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
         }
@@ -495,7 +482,7 @@ const Banners = (props) => {
   // -- CONVER JSON  TO EXCEL
   const exportExcel = async () => {
     const query = queryBuild();
-    const response = await axios.get("banners/excel?" + query);
+    const response = await axios.get("partners/excel?" + query);
     let excelData = [];
     if (response) {
       const data = response.data.data;
@@ -505,10 +492,7 @@ const Banners = (props) => {
           keys.map(
             (key) => col.key === key && col.status === false && delete el[key]
           );
-          if (col.key === "status" && col.status === true) {
-            el.status =
-              el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          }
+          
           if (col.key === "createUser" && col.status === true) {
             el.createUser = el.createUser && el.createUser.firstName;
           }
@@ -529,12 +513,6 @@ const Banners = (props) => {
         return el;
       });
     }
-
-    setLoading({
-      visible: true,
-      message: "Түр хүлээнэ үү excel файлруу хөрвүүлж байна",
-    });
-
     const head = [];
     cloneColumns.map((col) => {
       if (col.status === true) head.push(col.title);
@@ -544,7 +522,6 @@ const Banners = (props) => {
       visible: true,
       message: "Түр хүлээнэ үү excel файлруу хөрвүүлж байна",
     });
-
     if (excelData && excelData.length > 0) {
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
@@ -564,22 +541,21 @@ const Banners = (props) => {
   return (
     <>
       <div className="content-wrapper">
-        <div className="page-sub-menu">
-          <Menus />
-        </div>
+        <PageTitle name="Хамт олон" />
+
         <div className="content">
           <Loader show={loading.visible}> {loading.message}</Loader>
           <div className="container-fluid">
             <div className="card datatable-card">
               <div className="card-header">
-                <h3 className="card-title">Бүх баннер</h3>
+                <h3 className="card-title">Бүгд</h3>
               </div>
               <div className="card-body datatable-card-body">
                 <div className="datatable-header-tools">
                   <div className="datatable-actions">
                     <button
                       className="datatable-action add-bg"
-                      onClick={() => history.push(`/web_settings/banners/add`)}
+                      onClick={() => history.push(`/employee/add`)}
                     >
                       <i className="fa fa-plus"></i> Нэмэх
                     </button>
@@ -633,6 +609,9 @@ const Banners = (props) => {
                     loading={props.loading}
                     size="small"
                   />
+                </div>
+                <div className="talbeFooter">
+                  Нийт <b> {props.pagination.total} </b> өгөгдөл байна
                 </div>
               </div>
             </div>
@@ -721,22 +700,22 @@ const Banners = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.bannerReducer.loading,
-    success: state.bannerReducer.success,
-    error: state.bannerReducer.error,
-    banners: state.bannerReducer.banners,
-    pagination: state.bannerReducer.paginationLast,
-    excelData: state.bannerReducer.excelData,
+    loading: state.employeeReducer.loading,
+    success: state.employeeReducer.success,
+    error: state.employeeReducer.error,
+    employees: state.employeeReducer.employees,
+    pagination: state.employeeReducer.paginationLast,
+    excelData: state.employeeReducer.excelData,
   };
 };
 
 const mapDispatchToProp = (dispatch) => {
   return {
-    loadBanner: (query) => dispatch(actions.loadBanner(query)),
-    deleteMultBanner: (ids) => dispatch(actions.deleteMultBanner(ids)),
+    loadEmployee: (query) => dispatch(actions.loadEmployee(query)),
+    deleteMultEmployee: (ids) => dispatch(actions.deleteMultEmployee(ids)),
     getExcelData: (query) => dispatch(actions.getExcelData(query)),
     clear: () => dispatch(actions.clear()),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProp)(Banners);
+export default connect(mapStateToProps, mapDispatchToProp)(Employees);

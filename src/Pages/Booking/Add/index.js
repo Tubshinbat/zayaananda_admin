@@ -161,13 +161,7 @@ const Add = (props) => {
     }
   }, [props.users]);
 
-  useEffect(() => {
-    if (props.bookings && props.bookings.length > 0) {
-      setErrors((be) => ({ ...be, time: false }));
-      toastControl("error", "Тухайн цаг дээр бүртгэл хийгдсэн байна");
-      setChoiseTime("");
-    }
-  }, [props.bookings]);
+ 
 
   // Functios
 

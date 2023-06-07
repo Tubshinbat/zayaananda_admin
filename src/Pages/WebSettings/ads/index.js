@@ -308,8 +308,8 @@ const Banners = (props) => {
           const key = el._id;
           delete el._id;
           el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          el.createUser = el.createUser && el.createUser.firstname;
-          el.updateUser = el.updateUser && el.updateUser.firstname;
+          el.createUser = el.createUser && el.createUser.firstName;
+          el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -505,8 +505,8 @@ const Banners = (props) => {
       const data = response.data.data;
       excelData = data.map((el) => {
         el.status = el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-        el.createUser = el.createUser && el.createUser.firstname;
-        el.updateUser = el.updateUser && el.updateUser.firstname;
+        el.createUser = el.createUser && el.createUser.firstName;
+        el.updateUser = el.updateUser && el.updateUser.firstName;
 
         el.createAt = moment(el.createAt)
           .utcOffset("+0800")

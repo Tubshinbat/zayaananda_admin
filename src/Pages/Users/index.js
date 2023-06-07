@@ -176,11 +176,11 @@ const Users = (props) => {
     },
 
     {
-      dataIndex: "firstname",
-      key: "firstname",
+      dataIndex: "firstName",
+      key: "firstName",
       title: "Нэр",
       status: true,
-      ...getColumnSearchProps("firstname"),
+      ...getColumnSearchProps("firstName"),
       sorter: (a, b) => handleSort(),
     },
 
@@ -385,8 +385,8 @@ const Users = (props) => {
 
           el.gender = el.gender === "male" ? "Эрэгтэй" : "Эмэгтэй";
           el.status = el.status == true ? "Идэвхтэй" : "Эрх хаасан";
-          el.createUser = el.createUser && el.createUser.firstname;
-          el.updateUser = el.updateUser && el.updateUser.firstname;
+          el.createUser = el.createUser && el.createUser.firstName;
+          el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -583,8 +583,8 @@ const Users = (props) => {
       const data = response.data.data;
       excelData = data.map((el) => {
         el.status = el.status && el.status == true ? "Идэвхтэй" : "Эрх хаасан";
-        el.createUser = el.createUser && el.createUser.firstname;
-        el.updateUser = el.updateUser && el.updateUser.firstname;
+        el.createUser = el.createUser && el.createUser.firstName;
+        el.updateUser = el.updateUser && el.updateUser.firstName;
         el.createAt = moment(el.createAt)
           .utcOffset("+0800")
           .format("YYYY-MM-DD HH:mm:ss");

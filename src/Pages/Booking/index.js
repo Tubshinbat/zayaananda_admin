@@ -190,7 +190,9 @@ const Faqs = (props) => {
       status: true,
       ...getColumnSearchProps("service"),
       render: (text, record) => {
-        return record.service.map((el) => <Tag color="blue"> {el} </Tag>);
+        return (
+           <Tag color="blue"> {record.service} </Tag>
+        );
       },
     },
     {
@@ -350,16 +352,18 @@ const Faqs = (props) => {
 
   // -- BOOKING GET DONE EFFECT
   useEffect(() => {
-    if (props.faqs) {
+    if (props.bookings) {
       const refData = [];
-
-      props.faqs.length > 0 &&
-        props.faqs.map((el) => {
+      
+      props.bookings.length > 0 &&
+        props.bookings.map((el) => {
           const key = el._id;
           delete el._id;
-          el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          el.createUser = el.createUser && el.createUser.firstname;
-          el.updateUser = el.updateUser && el.updateUser.firstname;
+          el.status = el.status == true ? "Идэвхтэй" : "Цуцлагдсан";
+          el.paid = el.paid == true ? "Төлбөр төлсөн" : "Төлөгдөөгүй";
+          el.service  = el.service.name;
+          el.createUser = el.createUser && el.createUser.firstName;
+          el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -376,7 +380,7 @@ const Faqs = (props) => {
       // console.log(refData);
       setData(refData);
     }
-  }, [props.faqs]);
+  }, [props.bookings]);
 
   // Start moment
   useEffect(() => {
@@ -482,13 +486,7 @@ const Faqs = (props) => {
     Object.keys(querys).map((key) => {
       key !== "select" && (query += `${key}=${querys[key]}&`);
     });
-    if (querys.select && querys.select[0]) {
-      query += `select=${
-        querys &&
-        querys.select &&
-        querys.select[0].join(" ").replaceAll(",", " ")
-      }`;
-    }
+ 
     return query;
   };
 
@@ -568,10 +566,10 @@ const Faqs = (props) => {
               el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
           }
           if (col.key === "createUser" && col.status === true) {
-            el.createUser = el.createUser && el.createUser.firstname;
+            el.createUser = el.createUser && el.createUser.firstName;
           }
           if (col.key === "updateUser" && col.status === true) {
-            el.updateUser = el.updateUser && el.updateUser.firstname;
+            el.updateUser = el.updateUser && el.updateUser.firstName;
           }
           if (col.key === "createAt" && col.status === true) {
             el.createAt = moment(el.createAt)

@@ -91,7 +91,7 @@ const Side = (props) => {
               >
                 <i className="nav-icon fa fa-bookmark" />
                 <p>
-                  Захиалгууд 
+                  Цаг авалт 
                   {/* <span class="badge badge-info right">2</span> */}
                 </p>
               </NavLink>
