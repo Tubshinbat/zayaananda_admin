@@ -55,7 +55,7 @@ const reducer = (state = initialState, action) => {
       };
 
     // EXCEL DATA
-    case "GET_EXCEL_DATA_START":
+    case "GET_USEREXCEL_DATA_START":
       return {
         ...state,
         excelLoading: true,
@@ -64,14 +64,14 @@ const reducer = (state = initialState, action) => {
         excelData: [],
       };
 
-    case "GET_EXCEL_DATA_SUCCESS":
+    case "GET_USEREXCEL_DATA_SUCCESS":
       return {
         ...state,
         loading: false,
         excelData: action.excel,
       };
 
-    case "GET_EXCEL_DATA_ERROR":
+    case "GET_USEREXCEL_DATA_ERROR":
       return {
         ...state,
         loading: false,
@@ -116,7 +116,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: null,
-        success: "Амжилттай датаг устгалаа"
+        success: "Амжилттай датаг устгалаа",
       };
     case "DELETE_MULT_USERS_ERROR":
       return {

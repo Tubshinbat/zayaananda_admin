@@ -159,22 +159,21 @@ const Faqs = (props) => {
       sorter: (a, b) => handleSort(),
     },
 
-
     {
-      dataIndex: 'bookingNumber',
+      dataIndex: "bookingNumber",
       key: "bookingNumber",
       title: "Захиалгын дугаар",
       status: true,
-      ...getColumnSearchProps('bookingNumber'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("bookingNumber"),
+      sorter: (a, b) => handleSort(),
     },
 
     {
-      dataIndex: 'paidType',
+      dataIndex: "paidType",
       key: "paidType",
       title: "Төлсөн хэлбэр",
       status: false,
-      ...getColumnSearchProps('paidType'),
+      ...getColumnSearchProps("paidType"),
     },
 
     {
@@ -189,74 +188,71 @@ const Faqs = (props) => {
       key: "service",
       title: "Захиалга өгсөн үйлчилгээ",
       status: true,
-      ...getColumnSearchProps('service'),
+      ...getColumnSearchProps("service"),
       render: (text, record) => {
         return record.service.map((el) => <Tag color="blue"> {el} </Tag>);
       },
     },
     {
-      dataIndex: 'date',
+      dataIndex: "date",
       key: "date",
       title: "Огноо",
       status: true,
-      ...getColumnSearchProps('date'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("date"),
+      sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: 'time',
+      dataIndex: "time",
       key: "time",
       title: "Цаг",
       status: true,
-      ...getColumnSearchProps('time'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("time"),
+      sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: 'bookingMsg',
+      dataIndex: "bookingMsg",
       key: "bookingMsg",
       title: "Нэмэлт мэдээлэл",
       status: true,
-      ...getColumnSearchProps('bookingMsg'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("bookingMsg"),
+      sorter: (a, b) => handleSort(),
     },
 
     {
-      dataIndex: 'lastName',
+      dataIndex: "lastName",
       key: "lastName",
       title: "Овог нэр",
       status: false,
-      ...getColumnSearchProps('lastName'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("lastName"),
+      sorter: (a, b) => handleSort(),
     },
 
     {
-      dataIndex: 'firstName',
+      dataIndex: "firstName",
       key: "firstName",
       title: "Нэр",
       status: false,
-      ...getColumnSearchProps('firstName'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("firstName"),
+      sorter: (a, b) => handleSort(),
     },
 
     {
-      dataIndex: 'phoneNumber',
+      dataIndex: "phoneNumber",
       key: "phoneNumber",
       title: "Утасны дугаар",
       status: false,
-      ...getColumnSearchProps('phoneNumber'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("phoneNumber"),
+      sorter: (a, b) => handleSort(),
     },
 
     {
-      dataIndex: 'email',
+      dataIndex: "email",
       key: "email",
       title: "Имэйл",
       status: false,
-      ...getColumnSearchProps('email'),
-      sorter: (a,b) => handleSort()
+      ...getColumnSearchProps("email"),
+      sorter: (a, b) => handleSort(),
     },
-
-
-
 
     {
       dataIndex: "createUser",
@@ -633,7 +629,7 @@ const Faqs = (props) => {
                   <div className="datatable-actions">
                     <button
                       className="datatable-action add-bg"
-                      onClick={() => history.push(`/faqs/add`)}
+                      onClick={() => history.push(`/booking/add`)}
                     >
                       <i className="fa fa-plus"></i> Нэмэх
                     </button>

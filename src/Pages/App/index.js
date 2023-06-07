@@ -57,6 +57,8 @@ import UserAdd from "../Users/Add";
 import UserEdit from "../Users/Edit";
 //Booking
 import Booking from "../Booking";
+import BookingEdit from "../Booking/Edit";
+import BookingAdd from "../Booking/Add";
 
 // Product
 // import Product from "../Product";
@@ -129,8 +131,9 @@ function App(props) {
               <Route path="/faqs/edit/:id" exact component={FaqEdit} />
               <Route path="/faqs" exact component={Faq} />
               //Booking
+              <Route path="/booking/add" exact component={BookingAdd} />
+              <Route path="/booking/edit/:id" exact component={BookingEdit} />
               <Route path="/booking" exact component={Booking} />
-              
               // Gallery
               <Route path="/gallery/add" exact component={GalleryAdd} />
               <Route path="/gallery/edit/:id" exact component={GalleryEdit} />

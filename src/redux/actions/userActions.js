@@ -42,20 +42,20 @@ export const getExcelData = (query) => {
 
 const getExcelDataStart = () => {
   return {
-    type: "GET_EXCEL_DATA_START",
+    type: "GET_USEREXCEL_DATA_START",
   };
 };
 
 const getExcelDataSuccess = (data) => {
   return {
-    type: "GET_EXCEL_DATA_SUCCESS",
+    type: "GET_USEREXCEL_DATA_SUCCESS",
     excel: data,
   };
 };
 
 const getExcelDataError = (error) => {
   return {
-    type: "GET_EXCEL_DATA_ERROR",
+    type: "GET_USEREXCEL_DATA_ERROR",
     error,
   };
 };
