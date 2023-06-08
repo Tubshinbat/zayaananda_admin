@@ -198,32 +198,31 @@ const Add = (props) => {
                         </div>
                         <div className="col-12">
                           <Form.Item
-                            label="Сургалтын үнэ"
+                            label="Бүтээгдэхүүний үнэ"
                             name="price"
                             rules={[requiredRule]}
                             hasFeedback
                           >
                             <InputNumber
                               style={{ width: "100%" }}
-                              placeholder="Сургалтын үнэ оруулна уу"
+                              placeholder="Бүтээгдэхүүний үнэ оруулна уу"
                             />
                           </Form.Item>
                         </div>
-                        
-                          <div className="col-12">
-                            <Form.Item
-                              label="Хөнгөлөлт"
-                              name="discount"
-                        
-                              hasFeedback
-                            >
-                              <InputNumber
-                                style={{ width: "100%" }}
-                                placeholder="Хөнгөлөлт оруулна уу"
-                              />
-                            </Form.Item>
-                          </div>
-                        
+
+                        <div className="col-12">
+                          <Form.Item
+                            label="Хөнгөлөлт"
+                            name="discount"
+                            hasFeedback
+                          >
+                            <InputNumber
+                              style={{ width: "100%" }}
+                              placeholder="Хөнгөлөлт оруулна уу"
+                            />
+                          </Form.Item>
+                        </div>
+
                         <div className="col-12">
                           <Form.Item
                             label="Дэлгэрэнгүй"
@@ -367,7 +366,6 @@ const Add = (props) => {
                             <Switch size="medium" />
                           </Form.Item>
                         </div>
-                     
                       </div>
                     </div>
                     <div className="card-footer">
@@ -412,7 +410,6 @@ const Add = (props) => {
                       </div>
                     </div>
                   </div>
-                  
 
                   <div className="card">
                     <div class="card-header">

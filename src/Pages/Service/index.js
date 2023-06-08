@@ -165,6 +165,15 @@ const Services = (props) => {
       ...getColumnSearchProps("name"),
       sorter: (a, b) => handleSort(),
     },
+
+    {
+      dataIndex: "price",
+      key: "price",
+      title: "Үнэ",
+      status: true,
+      ...getColumnSearchProps("price"),
+      sorter: (a, b) => handleSort(),
+    },
     {
       dataIndex: "link",
       key: "link",
