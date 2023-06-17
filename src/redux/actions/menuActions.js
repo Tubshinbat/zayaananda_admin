@@ -197,6 +197,7 @@ export const saveMenu = (menu) => {
       isModel: menu.isModel,
       model: menu.model,
       direct: menu.direct,
+      cover: menu.cover,
     };
 
     if (menu.parentId !== null) {
@@ -207,6 +208,7 @@ export const saveMenu = (menu) => {
         isModel: menu.isModel,
         model: menu.model,
         direct: menu.direct,
+        cover: menu.cover,
       };
     }
 

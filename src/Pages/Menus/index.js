@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Form, Input, Switch, Tree, Select } from "antd";
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  Switch,
+  Tree,
+  Select,
+  message,
+} from "antd";
 import { connect } from "react-redux";
+import { InboxOutlined } from "@ant-design/icons";
 
 // Actions
 import * as actions from "../../redux/actions/menuActions";
+import axios from "../../axios-base";
 
 // Components
-import PageTitle from "../../Components/PageTitle";
 import Menus from "./menu";
 import { toastControl } from "../../lib/toasControl";
 import Loader from "../../Components/Generals/Loader";
+import Dragger from "antd/lib/upload/Dragger";
+import base from "../../base";
 
 const menuGenerateData = (categories) => {
   let datas = [];
@@ -43,6 +55,7 @@ const SiteMenu = (props) => {
   const [isModel, setIsModel] = useState(false);
   const [isDirect, setIsDirect] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(true);
+  const [cover, setCover] = useState({});
 
   const [visible, setVisible] = useState({
     edit: false,
@@ -71,6 +84,7 @@ const SiteMenu = (props) => {
   useEffect(() => {
     if (props.success) {
       toastControl("success", props.success);
+
       init();
       clear();
     }
@@ -90,6 +104,14 @@ const SiteMenu = (props) => {
   useEffect(() => {
     if (props.category) {
       setSelectData(props.category);
+      if (props.category.cover) {
+        const url = base.cdnUrl + props.category.cover;
+        const img = {
+          name: props.category.cover,
+          url,
+        };
+        setCover(img);
+      }
     }
   }, [props.category]);
 
@@ -106,6 +128,7 @@ const SiteMenu = (props) => {
     form.resetFields();
     setIsDirect(false);
     setIsModel(false);
+    setCover();
   };
 
   const onDragEnter = (info) => {
@@ -186,6 +209,7 @@ const SiteMenu = (props) => {
     values.isDirect = isDirect;
     values.isModel = isModel;
     values.status = selectedStatus;
+    if (cover) values.cover = cover.name;
     const data = {
       ...values,
     };
@@ -198,6 +222,7 @@ const SiteMenu = (props) => {
     values.isDirect = isDirect;
     values.isModel = isModel;
     values.status = selectedStatus;
+    if (cover) values.cover = cover.name;
     const data = {
       ...values,
     };
@@ -208,9 +233,13 @@ const SiteMenu = (props) => {
     values.isDirect = isDirect;
     values.isModel = isModel;
     values.status = selectedStatus;
+    if (cover) values.cover = cover.name;
+    else values.cover = "";
     const data = {
       ...values,
     };
+
+    console.log(data);
 
     props.updateMenu(data, select[0]);
     handleCancel();
@@ -237,6 +266,7 @@ const SiteMenu = (props) => {
       case "parent": {
         if (select && select.length === 1) {
           setVisible((sb) => ({ ...sb, [modal]: true }));
+          setCover();
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
         }
@@ -248,7 +278,14 @@ const SiteMenu = (props) => {
           setIsDirect(props.category.isDirect);
           setIsModel(props.category.isModel);
           setSelectedStatus(props.category.status);
-
+          if (props.category.cover) {
+            const url = base.cdnUrl + props.category.cover;
+            const img = {
+              name: props.category.cover,
+              url,
+            };
+            setCover(img);
+          }
           setVisible((sb) => ({ ...sb, [modal]: true }));
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
@@ -257,6 +294,7 @@ const SiteMenu = (props) => {
       }
       default: {
         setVisible((sb) => ({ ...sb, [modal]: true }));
+        setCover();
         break;
       }
     }
@@ -265,6 +303,61 @@ const SiteMenu = (props) => {
   const handleCancel = () => {
     setVisible((sb) => Object.keys(sb).map((el) => (sb[el] = false)));
     clear();
+  };
+
+  const handleRemove = (stType, file) => {
+    let index;
+
+    setCover({});
+
+    axios
+      .delete("/imgupload", { data: { file: file.name } })
+      .then((succ) => {
+        toastControl("success", "Амжилттай файл устгагдлаа");
+      })
+      .catch((error) =>
+        toastControl("error", "Файл устгах явцад алдаа гарлаа")
+      );
+  };
+
+  const uploadImage = async (options) => {
+    const { onSuccess, onError, file, onProgress } = options;
+    const fmData = new FormData();
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+      onUploadProgress: (event) => {
+        const percent = Math.floor((event.loaded / event.total) * 100);
+        onProgress({ percent: (event.loaded / event.total) * 100 });
+      },
+    };
+
+    fmData.append("file", file);
+    try {
+      const res = await axios.post("/imgupload", fmData, config);
+      const img = {
+        name: res.data.data,
+        url: `${base.cdnUrl}${res.data.data}`,
+      };
+      setCover(img);
+
+      onSuccess("Ok");
+      message.success(res.data.data + " Хуулагдлаа");
+      return img;
+    } catch (err) {
+      toastControl("error", err);
+      onError({ err });
+      return false;
+    }
+  };
+
+  const uploadOptions = {
+    onRemove: (file) => handleRemove("cover", file),
+    fileList: cover && cover.name && [cover],
+    customRequest: (options) => uploadImage(options),
+    accept: "image/*",
+    name: "cover",
+    listType: "picture",
+    maxCount: 1,
   };
 
   return (
@@ -484,6 +577,17 @@ const SiteMenu = (props) => {
                 />
               </Form.Item>
             </div>
+            <div className="col-12 drag">
+              <Dragger {...uploadOptions} className="upload-list-inline">
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Толгой дээр харагдах зургаа энэ хэсэгт чирч оруулна уу
+                </p>
+                <p className="ant-upload-hint">Нэг файл хуулах боломжтой</p>
+              </Dragger>
+            </div>
           </div>
         </Form>
       </Modal>
@@ -635,6 +739,19 @@ const SiteMenu = (props) => {
                 />
               </Form.Item>
             </div>
+            <div className="col-12">
+              <div className="col-12">
+                <Dragger {...uploadOptions} className="upload-list-inline">
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Толгой дээр харагдах зургаа энэ хэсэгт чирч оруулна уу
+                  </p>
+                  <p className="ant-upload-hint">Нэг файл хуулах боломжтой</p>
+                </Dragger>
+              </div>
+            </div>
           </div>
         </Form>
       </Modal>
@@ -781,6 +898,17 @@ const SiteMenu = (props) => {
                   ]}
                 />
               </Form.Item>
+            </div>
+            <div className="col-12 drag">
+              <Dragger {...uploadOptions} className="upload-list-inline">
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Толгой дээр харагдах зургаа энэ хэсэгт чирч оруулна уу
+                </p>
+                <p className="ant-upload-hint">Нэг файл хуулах боломжтой</p>
+              </Dragger>
             </div>
           </div>
         </Form>

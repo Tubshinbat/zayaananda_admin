@@ -9,6 +9,11 @@ code {
   font-family: "Roboto", sans-serif !important;
 }
 
+.drag span{
+ display: flex;
+ flex-direction: column;
+}
+
 .form-select {
   font-size: 0.82rem !important;
 }
