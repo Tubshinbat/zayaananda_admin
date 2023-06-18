@@ -167,11 +167,11 @@ const Users = (props) => {
     },
 
     {
-      dataIndex: "lastname",
-      key: "lastname",
+      dataIndex: "lastName",
+      key: "lastName",
       title: "Овог",
       status: true,
-      ...getColumnSearchProps("lastname"),
+      ...getColumnSearchProps("lastName"),
       sorter: (a, b) => handleSort(),
     },
 
@@ -194,11 +194,11 @@ const Users = (props) => {
     },
 
     {
-      dataIndex: "phone",
-      key: "phone",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
       title: "Утасны дугаар",
       status: true,
-      ...getColumnSearchProps("phone"),
+      ...getColumnSearchProps("phoneNumber"),
       sorter: (a, b) => handleSort(),
     },
 

@@ -233,7 +233,7 @@ const Add = (props) => {
                           </div>
                           <div className="col-6">
                             <Form.Item
-                              name="lastname"
+                              name="lastName"
                               label="Эцэг (эх)-н нэр"
                               rules={[
                                 {
@@ -299,7 +299,7 @@ const Add = (props) => {
                           <div className="col-6">
                             <Form.Item
                               label="Утасны дугаар"
-                              name="phone"
+                              name="phoneNumber"
                               rules={[
                                 {
                                   required: true,
