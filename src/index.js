@@ -32,7 +32,8 @@ import footerMenuReducer from "./redux/reducer/footerMenuReducer";
 import pageReducer from "./redux/reducer/pageReducer";
 import bookingReducer from "./redux/reducer/bookingReducer";
 import productReducer from "./redux/reducer/productReducer";
-import employeeReducer from "./redux/reducer/employeeReducer"
+import employeeReducer from "./redux/reducer/employeeReducer";
+import payTypeReducer from "./redux/reducer/payTypeReducer";
 // styles
 import "./index.css";
 
@@ -69,6 +70,7 @@ const reducers = combineReducers({
   bannerReducer,
   adsBannerReducer,
   footerMenuReducer,
+  payTypeReducer,
   lessonReducer,
   pageReducer,
   bookingReducer,

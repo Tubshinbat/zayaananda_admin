@@ -68,9 +68,7 @@ const Side = (props) => {
                 <p>Хянах самбар</p>
               </NavLink>
             </li>
-
             <li className="nav-header">Контент</li>
-
             <li className="nav-item">
               <NavLink
                 to="/courses"
@@ -82,7 +80,6 @@ const Side = (props) => {
                 <p>Сургалт</p>
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink
                 to="/booking"
@@ -91,34 +88,37 @@ const Side = (props) => {
               >
                 <i className="nav-icon fa fa-bookmark" />
                 <p>
-                  Цаг авалт 
+                  Цаг авалт
                   {/* <span class="badge badge-info right">2</span> */}
                 </p>
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink to="/news" className="nav-link" activeClassName="active">
                 <i className="nav-icon fa fa-book" />
                 <p>Нийтлэл</p>
               </NavLink>
             </li>
-
             <li className="nav-item">
-              <NavLink to="/product" className="nav-link" activeClassName="active">
+              <NavLink
+                to="/product"
+                className="nav-link"
+                activeClassName="active"
+              >
                 <i className="nav-icon fa fa-box" />
                 <p>Бүтээгдэхүүн</p>
               </NavLink>
             </li>
-
             <li className="nav-item">
-              <NavLink to="/employee" className="nav-link" activeClassName="active">
+              <NavLink
+                to="/employee"
+                className="nav-link"
+                activeClassName="active"
+              >
                 <i className="nav-icon fa fa-users" />
                 <p>Хамт олон</p>
               </NavLink>
             </li>
-            
-
             {role != "operator" && (
               <li className="nav-item">
                 <NavLink
@@ -131,8 +131,6 @@ const Side = (props) => {
                 </NavLink>
               </li>
             )}
-           
-
             <li className="nav-item">
               <NavLink
                 to="/partners"
@@ -144,14 +142,12 @@ const Side = (props) => {
                 <p>Хамтрагчид</p>
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink to="/faqs" className="nav-link" activeClassName="active">
                 <i className="nav-icon fa fa-comment" />
                 <p>Түгээмэл асуулт хариулт</p>
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink
                 to="/gallery"
@@ -162,7 +158,6 @@ const Side = (props) => {
                 <p>Зургийн цомог</p>
               </NavLink>
             </li>
-
             <li className="nav-header">Бүртгэл</li>
             {role != "operator" && (
               <li className="nav-item">
@@ -176,7 +171,6 @@ const Side = (props) => {
                 </NavLink>
               </li>
             )}
-
             <li className="nav-header">Вэб тохиргоо</li>
             {role != "operator" && (
               <li className="nav-item">
@@ -211,6 +205,18 @@ const Side = (props) => {
                 >
                   <i className="nav-icon fa fa-file" />
                   <p>Сайтын хуудас</p>
+                </NavLink>
+              </li>
+            )}{" "}
+            {role != "operator" && (
+              <li className="nav-item">
+                <NavLink
+                  to="/paytype"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <i className="nav-icon fa fa-file" />
+                  <p>Данс нэмэх</p>
                 </NavLink>
               </li>
             )}

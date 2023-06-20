@@ -35,6 +35,10 @@ import LessonEdit from "../Lesson/Edit";
 import Service from "../Service";
 import ServiceAdd from "../Service/Add";
 import ServiceEdit from "../Service/Edit";
+// paidtype
+import Paytype from "../Paytype";
+import PaytypeAdd from "../Paytype/Add";
+import PaytypeEdit from "../Paytype/Edit";
 // Ads
 import Ads from "../Ads";
 import AdsAdd from "../Ads/Add";
@@ -63,11 +67,11 @@ import BookingAdd from "../Booking/Add";
 // Product
 import Product from "../Product";
 import ProductAdd from "../Product/Add";
-import ProductEdit from "../Product/Edit"
+import ProductEdit from "../Product/Edit";
 // Employee
 import Employee from "../Employee";
 import EmployeeAdd from "../Employee/Add";
-import EmployeeEdit from "../Employee/Edit"
+import EmployeeEdit from "../Employee/Edit";
 
 // Websettings
 import WebSettings from "../WebSettings";
@@ -165,6 +169,10 @@ function App(props) {
               <Route path="/employee/add" exact component={EmployeeAdd} />
               <Route path="/employee/edit/:id" exact component={EmployeeEdit} />
               <Route path="/employee" exact component={Employee} />
+              // Employee
+              <Route path="/paytype/add" exact component={PaytypeAdd} />
+              <Route path="/paytype/edit/:id" exact component={PaytypeEdit} />
+              <Route path="/paytype" exact component={Paytype} />
               //users
               <Route path="/users/add" exact component={UserAdd} />
               <Route path="/users/edit/:id" exact component={UserEdit} />
