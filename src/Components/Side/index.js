@@ -87,10 +87,27 @@ const Side = (props) => {
                 activeClassName="active"
               >
                 <i className="nav-icon fa fa-bookmark" />
-                <p>
-                  Цаг авалт
-                  {/* <span class="badge badge-info right">2</span> */}
-                </p>
+                <p>Цаг авалт</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/carts"
+                className="nav-link"
+                activeClassName="active"
+              >
+                <i className="nav-icon fa fa-shopping-cart" />
+                <p>Дэлгүүрийн захиалгууд</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/invoice"
+                className="nav-link"
+                activeClassName="active"
+              >
+                <i className="nav-icon fa fa-book" />
+                <p>Сургалтын бүртгэл</p>
               </NavLink>
             </li>
             <li className="nav-item">

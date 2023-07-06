@@ -34,6 +34,8 @@ import bookingReducer from "./redux/reducer/bookingReducer";
 import productReducer from "./redux/reducer/productReducer";
 import employeeReducer from "./redux/reducer/employeeReducer";
 import payTypeReducer from "./redux/reducer/payTypeReducer";
+import cartReducer from "./redux/reducer/cartReducer";
+import invoiceReducer from "./redux/reducer/invoiceReducer";
 // styles
 import "./index.css";
 
@@ -77,6 +79,8 @@ const reducers = combineReducers({
   productReducer,
   employeeReducer,
   initCourseReducer,
+  invoiceReducer,
+  cartReducer,
 });
 
 const middlewares = [loggerMiddlaware, thunk];

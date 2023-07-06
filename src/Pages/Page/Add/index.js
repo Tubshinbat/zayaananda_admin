@@ -22,10 +22,7 @@ import { loadMenus } from "../../../redux/actions/menuActions";
 import { loadFooterMenus } from "../../../redux/actions/footerMenuActions";
 import { loadNewsCategories } from "../../../redux/actions/newsCategoryActions";
 import * as actions from "../../../redux/actions/pageActions";
-import { getExcelData as ServiceDataGet } from "../../../redux/actions/serviceActions";
-import { getExcelData as PlatformDataGet } from "../../../redux/actions/platformActions";
-import { getExcelData as CostDataGet } from "../../../redux/actions/costActions";
-import { getExcelData as PartnerGet } from "../../../redux/actions/partnerActions";
+
 import { getExcelData as GetPageDatas } from "../../../redux/actions/pageActions";
 
 // Lib
@@ -74,10 +71,6 @@ const Add = (props) => {
   const init = () => {
     props.loadFooterMenus();
     props.loadMenus();
-    props.platformDataGet();
-    props.serviceDataGet();
-    props.costDataGet();
-    props.partnerDataGet();
     props.loadNewsCategories();
     props.getPageDatas();
   };
@@ -251,34 +244,6 @@ const Add = (props) => {
   useEffect(() => {
     let data = [];
     switch (modal) {
-      case "platforms": {
-        data = props.platforms.map((platform) => ({
-          value: platform._id,
-          label: platform.name,
-        }));
-        break;
-      }
-      case "services": {
-        data = props.services.map((service) => ({
-          value: service._id,
-          label: service.name,
-        }));
-        break;
-      }
-      case "costs": {
-        data = props.costs.map((cost) => ({
-          value: cost._id,
-          label: cost.name + " " + cost.mark + "/" + cost.date,
-        }));
-        break;
-      }
-      case "partners": {
-        data = props.partners.map((partner) => ({
-          value: partner._id,
-          label: partner.name,
-        }));
-        break;
-      }
       default: {
         data = [];
         break;
@@ -356,22 +321,6 @@ const Add = (props) => {
                               onChange={(value) => setModal(value)}
                               options={[
                                 {
-                                  value: "platforms",
-                                  label: "Платформууд",
-                                },
-                                {
-                                  value: "services",
-                                  label: "Үйлчилгээнүүд",
-                                },
-                                {
-                                  value: "costs",
-                                  label: "Үнийн мэдээлэл",
-                                },
-                                {
-                                  value: "partners",
-                                  label: "Хамтрагч компани",
-                                },
-                                {
                                   value: "contact",
                                   label: "Холбоо барих",
                                 },
@@ -379,30 +328,7 @@ const Add = (props) => {
                             />
                           </Form.Item>
                         </div>
-                        <div className="col-12">
-                          <Form.Item
-                            label="Холбох модалын өгөгдлүүд"
-                            name="modal"
-                            rules={
-                              modal &&
-                              modal !== "contact" &&
-                              modal !== "costs" && [requiredRule]
-                            }
-                            style={{
-                              display:
-                                modal && modal != "contact" && modal !== "costs"
-                                  ? "block"
-                                  : "none",
-                            }}
-                          >
-                            <Select
-                              showSearch
-                              style={{ width: "100%" }}
-                              placeholder="Холбох модал өгөгдлүүд"
-                              options={choiseData}
-                            />
-                          </Form.Item>
-                        </div>
+
                         <div className="col-12">
                           <Form.Item
                             label="Дэлгэрэнгүй"
@@ -543,47 +469,6 @@ const Add = (props) => {
                         </div>
                       </div>
                     </div>
-
-                    <div className="col-4">
-                      <div className="card">
-                        <div class="card-header">
-                          <h3 class="card-title"> ХӨЛНИЙ ЦЭС</h3>
-                        </div>
-                        <div className="card-body">
-                          <Form.Item name="footermenu">
-                            <Tree
-                              checkable
-                              onCheck={onCheckFooterMenu}
-                              checkedKeys={checkedFooterMenu}
-                              treeData={footerMenuData}
-                            />
-                          </Form.Item>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-4">
-                      <div className="card">
-                        <div class="card-header">
-                          <h3 class="card-title">МЭДЭЭНИЙ АНГИЛАЛ</h3>
-                        </div>
-                        <div
-                          className="card-body"
-                          style={{
-                            display: newsActive == true ? "block" : "none",
-                          }}
-                        >
-                          <Form.Item name="type">
-                            <Tree
-                              checkable
-                              onCheck={onCheck}
-                              checkedKeys={checkedKeys}
-                              treeData={gData}
-                            />
-                          </Form.Item>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <div className="col-4">
@@ -675,117 +560,6 @@ const Add = (props) => {
 
                   <div className="card">
                     <div class="card-header">
-                      <h3 class="card-title">Мэдээний хэсэгтэй холбох</h3>
-                    </div>
-                    <div className="card-body">
-                      <div className="col-12">
-                        <Form.Item
-                          label="Мэдээний ангилал холбох"
-                          name="newsActive"
-                          tooltip="Сонгосон мэдээний ангилалын хамгийн сүүлд орсон 3 мэдээ тухайн хуудас харагдана мөн бүх мэдээллийг харах гээд мэдээний ангилалруу үсрэх линк давхар харагдана "
-                        >
-                          <Switch
-                            checkedChildren="Холбосон"
-                            unCheckedChildren="Холбоогүй"
-                            size="medium"
-                            checked={newsActive}
-                            onChange={(value) => setNewsActive(value)}
-                          />
-                        </Form.Item>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="card">
-                    <div class="card-header">
-                      <h3 class="card-title">ЦЭСТЭЙ ХОЛБОХ</h3>
-                    </div>
-                    <div className="card-body">
-                      <div className="col-12">
-                        <Form.Item
-                          label="Цэстэй холбоотой тохиргоог идэвхжүүлэх"
-                          name="mainLink"
-                          tooltip="Энэ тохиргоог идэвхжүүлвэл цэстэй холбоотой бүх тохиргоо тухайн цэс дээр ажиллана"
-                        >
-                          <Switch
-                            checkedChildren="Идэвхтэй"
-                            unCheckedChildren="Идэвхгүй"
-                            size="medium"
-                            checked={mainLink}
-                            onChange={(value) => setMainLink(value)}
-                          />
-                        </Form.Item>
-                      </div>
-                      {mainLink === true && (
-                        <>
-                          <div className="col-12">
-                            <Form.Item
-                              label="Дэд цэсүүдийг жагсаалтаар байдалтай харуулах"
-                              name="listActive"
-                              tooltip="Таны сонгосон цэс үндсэн цэс бол түүнд хамааргаадах дэд цэсүүд жагсаалт хэлбэртэй харагдана"
-                            >
-                              <Switch
-                                checkedChildren="Идэвхтэй"
-                                unCheckedChildren="Идэвхгүй"
-                                size="medium"
-                                checked={listActive}
-                                onChange={(value) => setListActive(value)}
-                              />
-                            </Form.Item>
-                          </div>
-                          <div className="col-12">
-                            <Form.Item
-                              label="Цэстэй холбогдох бүх хуудсуудыг жагсааж харуулах"
-                              name="pageActive"
-                              tooltip="Цэстэй холбогдсон бүх хуудсуудыг шууд харуулахгүйгээр жагсаалт болгож харуулна"
-                            >
-                              <Switch
-                                checkedChildren="Идэвхтэй"
-                                unCheckedChildren="Идэвхгүй"
-                                size="medium"
-                                checked={pageActive}
-                                onChange={(value) => setPageActive(value)}
-                              />
-                            </Form.Item>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="card">
-                    <div class="card-header">
-                      <h3 class="card-title">ХУУДАС ХОЛБОХ</h3>
-                    </div>
-                    <div className="card-body">
-                      <p>
-                        {" "}
-                        Хэрэв тухайн хуудсыг цэстэй холбох шаардлагагүй, зөвхөн
-                        сонгосон хуудас дотроо цааш үсрэх боломжтой харуулах бол
-                        энэ тохиргоог идэвхжүүлэнэ
-                      </p>
-                      <div className="col-12">
-                        <Form.Item
-                          label="Хуудас дотор дахиад хуудас үүсгэх"
-                          name="pageParentActive"
-                          tooltip="Урд нь үүсгэсэн хуудас дотор дахин дамжих хуудас үүсгэх боломжтой"
-                        >
-                          <Switch
-                            checkedChildren="Холбосон"
-                            unCheckedChildren="Холбоогүй"
-                            size="medium"
-                            checked={pageParentActive}
-                            onChange={(value) => {
-                              setPageParentActive(value);
-                            }}
-                          />
-                        </Form.Item>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="card">
-                    <div class="card-header">
                       <h3 class="card-title">Зураг оруулах</h3>
                     </div>
                     <div className="card-body">
@@ -823,10 +597,6 @@ const mapStateToProps = (state) => {
     success: state.pageReducer.success,
     error: state.pageReducer.error,
     loading: state.pageReducer.loading,
-    services: state.serviceReducer.excelData,
-    platforms: state.platformReducer.excelData,
-    costs: state.costReducer.excelData,
-    partners: state.partnerReducer.excelData,
     pages: state.pageReducer.excelData,
   };
 };
@@ -838,10 +608,7 @@ const mapDispatchToProps = (dispatch) => {
     loadMenus: () => dispatch(loadMenus()),
     loadNewsCategories: () => dispatch(loadNewsCategories()),
     savePage: (data) => dispatch(actions.savePage(data)),
-    serviceDataGet: (query) => dispatch(ServiceDataGet(query)),
-    platformDataGet: (query) => dispatch(PlatformDataGet(query)),
-    costDataGet: (query) => dispatch(CostDataGet(query)),
-    partnerDataGet: (query) => dispatch(PartnerGet(query)),
+
     getPageDatas: (query) => dispatch(GetPageDatas(query)),
     clear: () => dispatch(actions.clear()),
   };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Modal, Input, Select, Table, Tag, Space, Tooltip } from "antd";
+import { Button, Modal, Input, Table, Tag, Space, Tooltip } from "antd";
 import { connect } from "react-redux";
 import Highlighter from "react-highlight-words";
 import moment from "moment";
@@ -12,15 +12,14 @@ import base from "../../base";
 
 //Components
 import PageTitle from "../../Components/PageTitle";
-import Menus from "./menu";
 import axios from "../../axios-base";
 import { toastControl } from "../../lib/toasControl";
 import Loader from "../../Components/Generals/Loader";
 
 // Actions
-import * as actions from "../../redux/actions/initCourseActions";
+import * as actions from "../../redux/actions/cartActions";
 
-const Courses = (props) => {
+const Cart = (props) => {
   const searchInput = useRef(null);
   //STATES
   const [searchText, setSearchText] = useState("");
@@ -31,7 +30,6 @@ const Courses = (props) => {
     message: "",
   });
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
 
   // -- FILTER STATE
   const [querys, setQuerys] = useState({});
@@ -87,7 +85,7 @@ const Courses = (props) => {
               width: 90,
             }}
           >
-            Шинчлэх
+            Шинэчлэх
           </Button>
         </Space>
       </div>
@@ -128,179 +126,146 @@ const Courses = (props) => {
       key: "status",
       title: "Төлөв",
       status: true,
+      filterMode: "tree",
       filters: [
         {
-          text: "Нийтлэгдсэн",
+          text: "Идэвхтэй",
           value: "true",
         },
         {
-          text: "Ноорог",
+          text: "Цуцалсан",
           value: "false",
         },
       ],
       sorter: (a, b) => handleSort(),
     },
+
     {
-      dataIndex: "star",
-      key: "star",
-      title: "Онцолсон",
+      dataIndex: "orderNumber",
+      key: "orderNumber",
+      title: "Захиалгын дугаар",
       status: true,
+      ...getColumnSearchProps("orderNumber"),
+      sorter: (a, b) => handleSort(),
+    },
+
+    {
+      dataIndex: "paid",
+      key: "paid",
+      title: "Төлбөр төлөгдсөн эсэх",
+      status: true,
+      filterMode: "tree",
       filters: [
         {
-          text: "Онцолсон",
+          text: "Төлөгдсөн",
           value: "true",
         },
         {
-          text: "Энгийн",
+          text: "Төлөгдөөгүй",
           value: "false",
         },
       ],
       sorter: (a, b) => handleSort(),
     },
+
     {
-      dataIndex: "isDiscount",
-      key: "isDiscount",
-      title: "Хөнгөлөлт",
+      dataIndex: "paidType",
+      key: "paidType",
+      title: "Төлсөн хэлбэр",
       status: true,
+      filterMode: "tree",
       filters: [
         {
-          text: "Хөнгөлөлтэй",
-          value: "true",
+          text: "Төлбөр төлөгдөөгүй",
+          value: "none",
         },
         {
-          text: "Хөнгөлөлтгүй",
-          value: "false",
+          text: "Qpay",
+          value: "qpay",
+        },
+        {
+          text: "Банкаар шилжүүлсэн",
+          value: "bankaccount",
         },
       ],
     },
 
     {
-      dataIndex: "name",
-      key: "name",
-      title: "Курсын нэр",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      title: "Төлөх дүн",
       status: true,
-      ...getColumnSearchProps("name"),
-      sorter: (a, b) => handleSort(),
     },
+
     {
-      dataIndex: "type",
-      key: "type",
-      title: "Төрөл",
-      status: true,
-      filters: [
-        {
-          text: "Онлайн",
-          value: "online",
-        },
-        {
-          text: "Тэнхим",
-          value: "local",
-        },
-      ],
-    },
-    {
-      dataIndex: "startDate",
-      key: "startDate",
-      title: "Сургалт эхлэх хугацаа",
+      dataIndex: "lastName",
+      key: "lastName",
+      title: "Овог нэр",
       status: false,
+      ...getColumnSearchProps("lastName"),
       sorter: (a, b) => handleSort(),
     },
+
     {
-      dataIndex: "classCount",
-      key: "classCount",
-      title: "Сургалтын тоо",
-      status: false,
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "price",
-      key: "price",
-      title: "Сургалтын төлбөр",
+      dataIndex: "firstName",
+      key: "firstName",
+      title: "Захиалсан",
       status: true,
+      ...getColumnSearchProps("firstName"),
       sorter: (a, b) => handleSort(),
     },
+
     {
-      dataIndex: "discount",
-      key: "discount",
-      title: "Хөнгөлөлт",
-      status: false,
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "paidMember",
-      key: "paidMember",
-      title: "Төлбөр төлсөн",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      title: "Утасны дугаар",
       status: true,
+      ...getColumnSearchProps("phoneNumber"),
+      sorter: (a, b) => handleSort(),
+    },
+
+    {
+      dataIndex: "email",
+      key: "email",
+      title: "Имэйл",
+      status: false,
+      ...getColumnSearchProps("email"),
+      sorter: (a, b) => handleSort(),
+    },
+
+    {
+      dataIndex: "userId",
+      key: "userId",
+      title: "Захиалсан",
+      status: false,
+      ...getColumnSearchProps("userId"),
+      sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: "pictures",
-      key: "pictures",
-      title: "Зураг",
+      key: "keyPassword",
+      title: "Дэлгэрэнгүй",
       status: true,
       render: (text, record) => {
         return (
-          <div className="table-image">
-            {record.pictures && record.pictures.length > 0 ? (
-              <img src={`${base.cdnUrl}150x150/${record.pictures[0]}`} />
-            ) : (
-              "Зураг оруулаагүй байна"
-            )}
-          </div>
+          <button
+            className="changePasswordBtn"
+            onClick={() => history.push(`/carts/views/${record.key}`)}
+          >
+            Дэлгэрэнгүй
+          </button>
         );
       },
     },
-
-    {
-      dataIndex: "views",
-      key: "views",
-      title: "Үзсэн",
-      status: true,
-      ...getColumnSearchProps("views"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "createUser",
-      key: "createUser",
-      title: "Бүртгэсэн",
-      status: true,
-      ...getColumnSearchProps("createUser"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "updateUser",
-      key: "updateUser",
-      title: "Өөрчлөлт хийсэн",
-      status: false,
-      ...getColumnSearchProps("updateUser"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "createAt",
-      key: "createAt",
-      title: "Үүсгэсэн огноо",
-      status: true,
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "updateAt",
-      key: "updateAt",
-      title: "Өөрчлөлт хийсэн огноо",
-      status: false,
-      sorter: (a, b) => handleSort(),
-    },
   ]);
+
   const [cloneColumns, setCloneColumns] = useState(columns);
 
-  const handleEdit = () => {
-    if (selectedRowKeys.length != 1) {
-      toastControl("error", "Нэг өгөгдөл сонгоно уу");
-    } else {
-      history.push(`/courses/edit/${selectedRowKeys[0]}`);
-    }
+  const handleDelete = () => {
+    props.deleteMultCart(selectedRowKeys);
   };
 
-  const handleDelete = () => {
-    props.deleteMultInitCourse(selectedRowKeys);
+  const moreDetails = (productId) => {
+    history.push(`/carts/view/${productId}`);
   };
 
   // -- MODAL STATE
@@ -315,11 +280,7 @@ const Courses = (props) => {
       toastControl("error", props.error);
       props.clear();
     }
-    if (error) {
-      toastControl("error", error);
-      props.clear();
-    }
-  }, [props.error, error]);
+  }, [props.error]);
 
   useEffect(() => {
     if (props.success !== null) {
@@ -335,7 +296,7 @@ const Courses = (props) => {
   useEffect(() => {
     if (querys) {
       const query = queryBuild();
-      props.loadInitCourse(query);
+      props.loadCart(query);
     }
   }, [querys]);
 
@@ -355,23 +316,27 @@ const Courses = (props) => {
     setLoading({ visible: props.loading, message: "Түр хүлээнэ үү" });
   }, [props.loading]);
 
-  // -- NEWS GET DONE EFFECT
+  // -- BOOKING GET DONE EFFECT
   useEffect(() => {
-    if (props.initCourses) {
+    if (props.carts) {
       const refData = [];
-      props.initCourses.length > 0 &&
-        props.initCourses.map((el) => {
+
+      props.carts.length > 0 &&
+        props.carts.map((el) => {
           const key = el._id;
           delete el._id;
-          delete el.detials;
-          delete el.slug;
-          el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          el.star = el.star == true ? "Онцгойлсон" : "Энгийн";
-          el.isDiscount =
-            el.isDiscount == true ? "Хөнгөлөлтэй" : "Хөнгөлөлтгүй";
-          el.type = el.type == "online" ? "Цахим" : "Тэнхим";
+          delete el.carts;
+          el.status = el.status == true ? "Идэвхтэй" : "Цуцлагдсан";
+          el.paid = el.paid == true ? "Төлбөр төлсөн" : "Төлөгдөөгүй";
+          el.paidType =
+            (el.paidType == "qpay" && "Qpay") ||
+            (el.paidType == "bankaccount" && "Банкаар шилжүүлсэн") ||
+            (el.paidType == "none" && "Төлбөр төлөгдөөгүй байна");
+          el.totalPrice = new Intl.NumberFormat().format(el.totalPrice) + "₮";
+          el.userId = el.userId && el.userId.firstName;
           el.createUser = el.createUser && el.createUser.firstName;
           el.updateUser = el.updateUser && el.updateUser.firstName;
+          el.orderNumber = "P" + el.orderNumber;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -379,26 +344,16 @@ const Courses = (props) => {
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
 
-          el.menu =
-            el.menu && el.menu.length > 0 && el.menu.map((el) => el.name);
-          el.price = new Intl.NumberFormat().format(el.price) + "₮";
-
-          el.categories =
-            el.categories &&
-            el.categories.length > 0 &&
-            el.categories.map((el) => el.name);
-
-          el.page = el.page && el.page.name && el.page.name;
-
           refData.push({
             dataIndex: key,
             key,
             ...el,
           });
         });
+      // console.log(refData);
       setData(refData);
     }
-  }, [props.initCourses]);
+  }, [props.carts]);
 
   // Start moment
   useEffect(() => {
@@ -407,19 +362,20 @@ const Courses = (props) => {
       clear();
     };
   }, []);
+
   useEffect(() => {
     const total = props.pagination.total;
     const pageSize = props.pagination.limit;
-
     setTableParams((tbf) => ({
       ...tbf,
       pagination: { ...tbf.pagination, total, pageSize },
     }));
   }, [props.pagination]);
+
   // -- INIT
   const init = () => {
     const query = queryBuild();
-    props.loadInitCourse(`${query}`);
+    props.loadCart(`${query}`);
   };
 
   const clear = () => {};
@@ -439,7 +395,7 @@ const Courses = (props) => {
   };
 
   const handleSort = () => {};
-
+  const history = useHistory();
   // -- TABLE SELECTED AND CHANGE
 
   const handleColumn = (e) => {
@@ -461,7 +417,7 @@ const Courses = (props) => {
     if (pagination) {
       setQuerys((bq) => ({
         ...bq,
-        pageNumber: pagination.current,
+        page: pagination.current,
         limit: pagination.pageSize,
       }));
     }
@@ -480,6 +436,7 @@ const Courses = (props) => {
     }
 
     if (filters) {
+      // console.log("end");
       Object.keys(filters).map((key) => {
         let str = null;
         if (filters[key]) {
@@ -502,12 +459,7 @@ const Courses = (props) => {
     Object.keys(querys).map((key) => {
       key !== "select" && (query += `${key}=${querys[key]}&`);
     });
-    if (querys.select && querys.select[0])
-      query += `select=${
-        querys &&
-        querys.select &&
-        querys.select[0].join(" ").replaceAll(",", " ")
-      }`;
+
     return query;
   };
 
@@ -524,7 +476,7 @@ const Courses = (props) => {
       }
       case "edit": {
         if (selectedRowKeys && selectedRowKeys.length === 1) {
-          props.history.replace("/news/edit/" + selectedRowKeys[0]);
+          props.history.replace("/carts/edit/" + selectedRowKeys[0]);
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
         }
@@ -551,6 +503,7 @@ const Courses = (props) => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  const hasSelected = selectedRowKeys.length > 0;
 
   // -- PLUS FUNCTION REFRESH, TO EXCEL, COLUMN
   const refreshTable = () => {
@@ -569,124 +522,22 @@ const Courses = (props) => {
   };
 
   // -- CONVER JSON  TO EXCEL
-  const exportExcel = async () => {
-    const query = queryBuild();
-    const response = await axios.get("initcourses/excel?" + query);
-    let excelData = [];
-    if (response) {
-      const data = response.data.data;
-      excelData = data.map((el) => {
-        cloneColumns.map((col) => {
-          const keys = Object.keys(el);
-          keys.map(
-            (key) => col.key === key && col.status === false && delete el[key]
-          );
-          if (col.key === "status" && col.status === true) {
-            el.status =
-              el.status && el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          }
-          if (col.key === "star" && col.status === true) {
-            el.star = el.star && el.star == true ? "Онцгойлсон" : "Энгийн";
-          }
-          if (col.key === "isDiscount" && col.status === true) {
-            el.isDiscount =
-              el.isDiscount && el.isDiscount == true
-                ? "Хөнгөлөлтэй"
-                : "Хөнгөлөлтгүй";
-          }
-          if (col.key === "type" && col.status === true) {
-            el.type = el.type && el.type == "online" ? "Цахим" : "Тэнхим";
-          }
-          if (col.key === "createUser" && col.status === true) {
-            el.createUser = el.createUser && el.createUser.firstName;
-          }
-          if (col.key === "updateUser" && col.status === true) {
-            el.updateUser = el.updateUser && el.updateUser.firstName;
-          }
-          if (col.key === "menu" && col.status === true) {
-            el.menu =
-              el.menu && el.menu.length > 0 && el.menu.map((el) => el.name);
-          }
-          if (col.key === "footerMenu" && col.status === true) {
-            el.footerMenu =
-              el.footerMenu &&
-              el.footerMenu.length > 0 &&
-              el.footerMenu.map((el) => el.name);
-          }
-          if (col.key === "categories" && col.status === true) {
-            el.categories =
-              el.categories &&
-              el.categories.length > 0 &&
-              el.categories.map((el) => el.name);
-          }
-          if (col.key === "createAt" && col.status === true) {
-            el.createAt = moment(el.createAt)
-              .utcOffset("+0800")
-              .format("YYYY-MM-DD HH:mm:ss");
-          }
-          if (col.key === "updateAt" && col.status === true) {
-            el.updateAt = moment(el.updateAt)
-              .utcOffset("+0800")
-              .format("YYYY-MM-DD HH:mm:ss");
-          }
-        });
-        return el;
-      });
-    }
-    const head = [];
-    cloneColumns.map((col) => {
-      if (col.status === true) head.push(col.title);
-    });
-    const Header = [["id", ...head]];
-    setLoading({
-      visible: true,
-      message: "Түр хүлээнэ үү excel файлруу хөрвүүлж байна",
-    });
-    if (excelData && excelData.length > 0) {
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      const date = new Date().toLocaleDateString();
-      XLSX.utils.sheet_add_aoa(worksheet, Header);
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-      XLSX.writeFile(workbook, `${date}.xlsx`);
-    }
-    setLoading({
-      visible: false,
-      message: "",
-    });
-  };
-
-  const history = useHistory();
 
   return (
     <>
       <div className="content-wrapper">
-        <PageTitle name="Курсууд" />
-        <div className="page-sub-menu">
-          <Menus />
-        </div>
+        <PageTitle name="Захиалга" />
+
         <div className="content">
           <Loader show={loading.visible}> {loading.message}</Loader>
           <div className="container-fluid">
             <div className="card datatable-card">
               <div className="card-header">
-                <h3 className="card-title">Бүгд</h3>
+                <h3 className="card-title">Захиалга</h3>
               </div>
               <div className="card-body datatable-card-body">
                 <div className="datatable-header-tools">
                   <div className="datatable-actions">
-                    <button
-                      className="datatable-action add-bg"
-                      onClick={() => history.push(`/courses/add`)}
-                    >
-                      <i className="fa fa-plus"></i> Нэмэх
-                    </button>
-                    <button
-                      className="datatable-action edit-bg"
-                      onClick={() => handleEdit()}
-                    >
-                      <i className="fa fa-edit"></i> Засах
-                    </button>
                     <button
                       className="datatable-action delete-bg"
                       onClick={() => showModal("delete")}
@@ -695,7 +546,7 @@ const Courses = (props) => {
                     </button>
                   </div>
                   <div className="datatable-tools">
-                    <Tooltip placement="left" title="Шинчлэх">
+                    <Tooltip placement="left" title="Шинэчлэх">
                       <button
                         className="datatable-tool"
                         onClick={() => refreshTable()}
@@ -703,14 +554,7 @@ const Courses = (props) => {
                         <i className="fas fa-redo"></i>
                       </button>
                     </Tooltip>
-                    <Tooltip placement="left" title="Excel файл болгон татах">
-                      <button
-                        className="datatable-tool"
-                        onClick={() => exportExcel()}
-                      >
-                        <i className="far fa-file-excel"></i>
-                      </button>
-                    </Tooltip>
+
                     <Tooltip placement="left" title="Баганын тохиргоо">
                       <button
                         className="datatable-tool"
@@ -822,22 +666,20 @@ const Courses = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.initCourseReducer.loading,
-    success: state.initCourseReducer.success,
-    error: state.initCourseReducer.error,
-    initCourses: state.initCourseReducer.initCourses,
-    pagination: state.initCourseReducer.paginationLast,
-    excelData: state.initCourseReducer.excelData,
+    loading: state.cartReducer.loading,
+    success: state.cartReducer.success,
+    error: state.cartReducer.error,
+    carts: state.cartReducer.carts,
+    pagination: state.cartReducer.paginationLast,
   };
 };
 
 const mapDispatchToProp = (dispatch) => {
   return {
-    loadInitCourse: (query) => dispatch(actions.loadInitCourse(query)),
-    deleteMultInitCourse: (ids) => dispatch(actions.deleteMultInitCourse(ids)),
-    getExcelData: (query) => dispatch(actions.getExcelData(query)),
+    loadCart: (query) => dispatch(actions.loadCart(query)),
+    deleteMultCart: (ids) => dispatch(actions.deleteMultCart(ids)),
     clear: () => dispatch(actions.clear()),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProp)(Courses);
+export default connect(mapStateToProps, mapDispatchToProp)(Cart);

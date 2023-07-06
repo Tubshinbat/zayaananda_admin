@@ -190,9 +190,7 @@ const Faqs = (props) => {
       status: true,
       ...getColumnSearchProps("service"),
       render: (text, record) => {
-        return (
-           <Tag color="blue"> {record.service} </Tag>
-        );
+        return <Tag color="blue"> {record.service} </Tag>;
       },
     },
     {
@@ -354,16 +352,17 @@ const Faqs = (props) => {
   useEffect(() => {
     if (props.bookings) {
       const refData = [];
-      
+
       props.bookings.length > 0 &&
         props.bookings.map((el) => {
           const key = el._id;
           delete el._id;
           el.status = el.status == true ? "Идэвхтэй" : "Цуцлагдсан";
           el.paid = el.paid == true ? "Төлбөр төлсөн" : "Төлөгдөөгүй";
-          el.service  = el.service.name;
+          el.service = el.service ? el.service.name : "Үйлчилгээ устсан";
           el.createUser = el.createUser && el.createUser.firstName;
           el.updateUser = el.updateUser && el.updateUser.firstName;
+          el.bookingNumber = "B" + el.bookingNumber;
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
@@ -486,7 +485,7 @@ const Faqs = (props) => {
     Object.keys(querys).map((key) => {
       key !== "select" && (query += `${key}=${querys[key]}&`);
     });
- 
+
     return query;
   };
 

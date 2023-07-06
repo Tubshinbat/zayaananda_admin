@@ -9,6 +9,7 @@ import {
   Radio,
   message,
   InputNumber,
+  DatePicker,
 } from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
@@ -39,6 +40,7 @@ const Add = (props) => {
   const [isDiscount, setIsDiscount] = useState(false);
   const [pictures, setPictures] = useState([]);
   const [type, setType] = useState("online");
+  const [choiseDate, setChoiseDate] = useState();
   const [setProgress] = useState(0);
   const [loading, setLoading] = useState({
     visible: false,
@@ -53,6 +55,7 @@ const Add = (props) => {
     form.resetFields();
     setPictures([]);
     setType("online");
+    setChoiseDate();
     setLoading(false);
   };
 
@@ -66,6 +69,10 @@ const Add = (props) => {
     setType(e.target.value);
   };
 
+  const handleDate = (date, dateString) => {
+    setChoiseDate(dateString);
+  };
+
   const handleAdd = (values, status = null) => {
     const type = values.type || "online";
     if (values.status === undefined) values.status = true;
@@ -75,6 +82,9 @@ const Add = (props) => {
       values.pictures = pictures.map((el) => el.name);
     } else {
       delete values.pictures;
+    }
+    if (values.startDate) {
+      values.startDate = choiseDate;
     }
 
     const data = {
@@ -208,6 +218,37 @@ const Add = (props) => {
                             />
                           </Form.Item>
                         </div>
+                        {type === "local" && (
+                          <>
+                            <div className="col-12">
+                              <Form.Item
+                                label="Сургалтанд хамрагдах хүний тоо"
+                                name="classCount"
+                                rules={[requiredRule]}
+                                hasFeedback
+                              >
+                                <InputNumber
+                                  style={{ width: "100%" }}
+                                  placeholder="Сургалтанд хамрагдах хүний тоо"
+                                />
+                              </Form.Item>
+                            </div>
+                            <div className="col-12">
+                              <Form.Item
+                                label="Сургалт эхлэх хугацаа"
+                                name="startDate"
+                                rules={[requiredRule]}
+                                hasFeedback
+                              >
+                                <DatePicker
+                                  style={{ width: "100%" }}
+                                  onChange={handleDate}
+                                  placeholder="Сургалт эхлэх хугацаа"
+                                />
+                              </Form.Item>
+                            </div>
+                          </>
+                        )}
                         {isDiscount && (
                           <div className="col-12">
                             <Form.Item

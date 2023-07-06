@@ -55,6 +55,14 @@ import FaqEdit from "../Faq/Edit";
 import Gallery from "../Gallery";
 import GalleryAdd from "../Gallery/Add";
 import GalleryEdit from "../Gallery/Edit";
+//Cart
+import Cart from "../Cart";
+import CartAdd from "../Cart/Add";
+import CartEdit from "../Cart/Edit";
+import CartView from "../Cart/Views";
+// Invoice
+import Invoice from "../Invoice";
+import InvoiceView from "../Invoice/Views";
 //User
 import User from "../Users";
 import UserAdd from "../Users/Add";
@@ -161,6 +169,12 @@ function App(props) {
               <Route path="/product/add" exact component={ProductAdd} />
               <Route path="/product/edit/:id" exact component={ProductEdit} />
               <Route path="/product" exact component={Product} />
+              // Cart
+              <Route path="/carts/views/:id" exact component={CartView} />
+              <Route path="/carts" exact component={Cart} />
+              // Invoice
+              <Route path="/invoice/views/:id" exact component={InvoiceView} />
+              <Route path="/invoice" exact component={Invoice} />
               // Pages
               <Route path="/pages/add" exact component={PageAdd} />
               <Route path="/pages/edit/:id" exact component={PageEdit} />

@@ -9,6 +9,7 @@ import {
   Radio,
   message,
   InputNumber,
+  DatePicker,
 } from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
@@ -26,6 +27,7 @@ import base from "../../../base";
 import axios from "../../../axios-base";
 import { toastControl } from "src/lib/toasControl";
 import { convertFromdata } from "../../../lib/handleFunction";
+import dayjs from "dayjs";
 
 const requiredRule = {
   required: true,
@@ -40,6 +42,7 @@ const Edit = (props) => {
   const [pictures, setPictures] = useState([]);
   const [type, setType] = useState("online");
   const [deleteFiles, setDeleteFiles] = useState([]);
+  const [choiseDate, setChoiseDate] = useState();
   const [setProgress] = useState(0);
   const [loading, setLoading] = useState({
     visible: false,
@@ -60,6 +63,7 @@ const Edit = (props) => {
     props.clear();
     form.resetFields();
     setPictures([]);
+    setChoiseDate();
     setType("online");
     setLoading(false);
   };
@@ -76,6 +80,10 @@ const Edit = (props) => {
 
   const onChangeType = (e) => {
     setType(e.target.value);
+  };
+
+  const handleDate = (date, dateString) => {
+    setChoiseDate(dateString);
   };
 
   const handleEdit = (values, status = null) => {
@@ -100,6 +108,7 @@ const Edit = (props) => {
     const data = {
       ...values,
       type,
+      startDate: choiseDate,
     };
 
     if (status === "draft") {
@@ -186,7 +195,7 @@ const Edit = (props) => {
         star: props.initCourse.star,
         status: props.initCourse.status,
       }));
-
+      setChoiseDate(props.initCourse.startDate);
       if (props.initCourse.pictures && props.initCourse.pictures.length > 0) {
         setPictures(
           props.initCourse.pictures.map((img) => ({
@@ -252,6 +261,37 @@ const Edit = (props) => {
                             />
                           </Form.Item>
                         </div>
+                        {type === "local" && (
+                          <>
+                            <div className="col-12">
+                              <Form.Item
+                                label="Сургалтанд хамрагдах хүний тоо"
+                                name="classCount"
+                                rules={[requiredRule]}
+                                hasFeedback
+                              >
+                                <InputNumber
+                                  style={{ width: "100%" }}
+                                  placeholder="Сургалтанд хамрагдах хүний тоо"
+                                />
+                              </Form.Item>
+                            </div>
+                            <div className="col-12">
+                              <Form.Item
+                                label={`Сургалт эхлэх хугацаа ${choiseDate}`}
+                                rules={[requiredRule]}
+                                hasFeedback
+                              >
+                                <DatePicker
+                                  style={{ width: "100%" }}
+                                  onChange={handleDate}
+                                  placeholder="Сургалт эхлэх хугацаа"
+                                  defaultValue={choiseDate && dayjs(choiseDate)}
+                                />
+                              </Form.Item>
+                            </div>
+                          </>
+                        )}
                         {isDiscount && (
                           <div className="col-12">
                             <Form.Item
